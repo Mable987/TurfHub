@@ -1,0 +1,60 @@
+{% extends "dashboard.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-warning">
+            <div class="card-header">
+                <h3 class="card-title">Edit Turf</h3>
+            </div>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="card-body">
+
+                    <div class="form-group">
+                        <label>Turf Name</label>
+                        <input type="text" name="turf_name" class="form-control"
+                               value="{{ turf.turf_name }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" name="location" class="form-control"
+                               value="{{ turf.location }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Price Per Hour</label>
+                        <input type="number" name="price" class="form-control"
+                               value="{{ turf.price_per_hour }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea name="description" class="form-control" rows="4">{{ turf.description }}</textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Current Image</label><br>
+                        {% if turf.turf_image %}
+                        <img src="{{ turf.turf_image.url }}" width="120">
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>Change Image</label>
+                        <input type="file" name="turf_image" class="form-control">
+                    </div>
+
+                </div>
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-warning">Update Turf</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
