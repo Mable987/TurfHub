@@ -5,6 +5,7 @@ from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import user_passes_test
+from django.db.models import Sum
 
 
 # Create your views here.
@@ -119,3 +120,38 @@ def admin_login(request):
 def admin_logout(request):
     logout(request)
     return redirect('admin_login')
+
+@superuser_required
+def admin_dashboard(request):
+    total_turfs = Turf.objects.count()
+    total_bookings = Booking.objects.count()
+    total_users = User.objects.count()
+
+    total_revenue = Booking.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
+    total_commission = Booking.objects.aggregate(Sum('platform_commission'))['platform_commission__sum'] or 0
+
+    context = {
+        'total_turfs': total_turfs,
+        'total_bookings': total_bookings,
+        'total_users': total_users,
+        'total_revenue': total_revenue,
+        'total_commission': total_commission,
+    }
+
+    return render(request, 'dashboard.html', context)
+
+@superuser_required
+def admin_view_bookings(request):
+    bookings = Booking.objects.select_related('user', 'turf').order_by('-created_at')
+
+    context = {
+        'bookings': bookings
+    }
+
+    return render(request, 'admin_view_bookings.html', context)
+@superuser_required
+def toggle_turf_status(request, turf_id):
+    turf = get_object_or_404(Turf, id=turf_id)
+    turf.is_active = not turf.is_active
+    turf.save()
+    return redirect('view_turfs')

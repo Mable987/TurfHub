@@ -220,7 +220,7 @@
                         <img src="{% static 'dashboard/dist/img/user2-160x160.jpg' %}" class="img-circle elevation-2"
                             alt="User Image">
                     </div>
-                   
+
                     <div class="info d-flex justify-content-between align-items-center w-100 position-relative">
 
                         <a href="#" class="d-block mb-0">
@@ -241,7 +241,7 @@
 
                         </div>
                     </div>
-                   
+
 
 
                 </div>
@@ -314,6 +314,12 @@
                                 <!--              </li>-->
                             </ul>
                         </li>
+                        <li class="nav-item">
+                            <a href="{% url 'admin_view_bookings' %}" class="nav-link">
+                                <i class="nav-icon fas fa-calendar-check"></i>
+                                <p>Bookings</p>
+                            </a>
+                        </li>
 
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -375,7 +381,7 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-           
+
             <!-- Content Header (Page header) -->
             <div class="content-header">
                 <div class="container-fluid">
@@ -407,7 +413,7 @@
                                     <h3>{{ total_bookings }}</h3>
                                     <p>Total Bookings</p>
 
-                                    
+
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-bag"></i>
@@ -437,9 +443,8 @@
                             <!-- small box -->
                             <div class="small-box bg-warning">
                                 <div class="inner">
-                                    <h3>44</h3>
-
-                                    <p>User Registrations</p>
+                                    <h3>{{ total_users }}</h3>
+                                    <p>Total Users</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-person-add"></i>
@@ -453,9 +458,8 @@
                             <!-- small box -->
                             <div class="small-box bg-danger">
                                 <div class="inner">
-                                    <h3>65</h3>
-
-                                    <p>Unique Visitors</p>
+                                    <h3>₹{{ total_revenue }}</h3>
+                                    <p>Total Revenue</p>
                                 </div>
                                 <div class="icon">
                                     <i class="ion ion-pie-graph"></i>

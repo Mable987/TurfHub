@@ -1,0 +1,64 @@
+{% extends 'dashboard.html' %}
+
+{% block content %}
+
+<h1>Admin View Bookings</h1>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Bookings</h3>
+
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" class="form-control float-right"
+                               placeholder="Search">
+
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Turf Name</th>
+                            <th>Booking Date</th>
+                            <th>Time Slot</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Payment Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.user.username }}</td>
+                            <td>{{ booking.turf.turf_name }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+                            <td>₹{{ booking.total_price }}</td>
+                            <td>{{ booking.status }}</td>
+                            <td>{{ booking.payment_status }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">No bookings found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

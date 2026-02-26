@@ -9,4 +9,6 @@ urlpatterns = [
 
     path('admin_login/', views.admin_login, name='admin_login'),
     path('admin_logout/', views.admin_logout, name='admin_logout'),
+    path('admin_view_bookings/', views.admin_view_bookings, name='admin_view_bookings'),
+    path('toggle_turf_status/<int:turf_id>/', views.toggle_turf_status, name='toggle_turf_status'),
 ]
