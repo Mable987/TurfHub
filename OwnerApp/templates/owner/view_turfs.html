@@ -1,0 +1,89 @@
+{% extends "owner/base_owner_dashboard.html" %}
+{% block content %}
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">View Turfs</h3>
+
+                <div class="card-tools">
+                    <div class="input-group input-group-sm" style="width: 150px;">
+                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                    <thead>
+                        <tr>
+                            <th>Turf Name</th>
+                            <th>Location</th>
+                            <th>Sports</th>
+                            <th>Price / Hour</th>
+                            <th>Image</th>
+                            <th>Status</th>
+                            <th>Owner</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in turfs %}
+                        <tr>
+                            <td>{{ t.turf_name }}</td>
+                            <td>{{ t.location }}</td>
+                            <td>
+                                {% for sport in t.sports.all %}
+                                <span class="badge badge-success">{{ sport.name }}</span>
+                                {% endfor %}
+                            </td>
+                            <td>₹ {{ t.price_per_hour }}</td>
+                            <td>
+                                {% if t.turf_image %}
+                                <img src="{{ t.turf_image.url }}" width="100">
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if t.is_active %}
+                                <span class="badge badge-success">Active</span>
+                                {% else %}
+                                <span class="badge badge-danger">Inactive</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if t.owner %}
+                                {{ t.owner.username }}
+                                {% else %}
+                                No Owner
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'owner_edit_turf' t.id %}" class="btn btn-outline-primary">Edit</a>
+                                <a href="{% url 'owner_delete_turf' t.id %}" class="btn btn-outline-danger btn"
+                                    onclick="return confirm('Are you sure you want to delete this turf?');">
+                                    Delete
+                                </a>
+
+                            </td>
+
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- /.card-body -->
+        </div>
+        <!-- /.card -->
+    </div>
+</div>
+
+{% endblock %}

@@ -3,19 +3,46 @@ from django.contrib.auth.models import User
 from datetime import datetime
 from decimal import Decimal
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+
+
+class Sport(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
 
 
 class Turf(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+
+    owner = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="owned_turfs"
+    )
+
     turf_name = models.CharField(max_length=100)
     location = models.CharField(max_length=200)
+
+    sports = models.ManyToManyField(Sport, blank=True)
+
     price_per_hour = models.DecimalField(max_digits=8, decimal_places=2)
+
     description = models.TextField()
+
     turf_image = models.ImageField(upload_to='turf_images/', null=True, blank=True)
+
+    opening_time = models.TimeField(null=True, blank=True)
+    closing_time = models.TimeField(null=True, blank=True)
+
     is_active = models.BooleanField(default=True)
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
-        return self.turf_name
+        return self.turf_name  
 
 
 class Booking(models.Model):
@@ -55,12 +82,23 @@ class Booking(models.Model):
         return f"{self.user.username} - {self.turf.turf_name}"
 
     def clean(self):
+
+    # 1️⃣ Prevent past date booking
+        if self.date < timezone.now().date():
+            raise ValidationError("You cannot book a past date.")
+
+    # 2️⃣ Prevent invalid time range
+        if self.start_time >= self.end_time:
+            raise ValidationError("End time must be after start time.")
+
+    # 3️⃣ Check overlapping bookings
         overlapping_bookings = Booking.objects.filter(
             turf=self.turf,
             date=self.date,
-            start_time__lt=self.end_time,
-            end_time__gt=self.start_time,
             status__in=['pending', 'confirmed']
+        ).filter(
+            start_time__lt=self.end_time,
+            end_time__gt=self.start_time
         )
 
         if self.pk:
@@ -76,9 +114,8 @@ class Booking(models.Model):
         end = datetime.combine(self.date, self.end_time)
 
         duration = end - start
-        hours = duration.total_seconds() / 3600
-
-        self.total_price = Decimal(hours) * self.turf.price_per_hour
+        hours = Decimal(duration.total_seconds()) / Decimal(3600)
+        self.total_price = hours * self.turf.price_per_hour
 
         commission_rate = Decimal('0.10')
         self.platform_commission = self.total_price * commission_rate

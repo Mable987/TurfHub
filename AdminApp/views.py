@@ -30,6 +30,7 @@ def admin_dashboard(request):
  
 @superuser_required
 def add_turf(request):
+
     if request.method == "POST":
         turf_name = request.POST.get('turf_name')
         location = request.POST.get('location')
@@ -37,10 +38,9 @@ def add_turf(request):
         description = request.POST.get('description')
         turf_image = request.FILES.get('turf_image')
 
-        print("FILES:", request.FILES)
-        print("IMAGE:", turf_image)
+        sports_ids = request.POST.getlist('sports')   
 
-        Turf.objects.create(
+        turf = Turf.objects.create(                   
             turf_name=turf_name,
             location=location,
             price_per_hour=price,
@@ -48,11 +48,12 @@ def add_turf(request):
             turf_image=turf_image
         )
 
+        turf.sports.set(sports_ids)                   
+
         messages.success(request, "Turf added successfully!")
         return redirect('add_turf')
 
     return render(request, 'add_turf.html')
-
 @superuser_required
 def view_turfs(request):
     turfs = Turf.objects.all().order_by('-id')
@@ -99,7 +100,7 @@ def delete_turf(request, turf_id):
 def admin_login(request):
 
     if request.user.is_authenticated and request.user.is_superuser:
-        return redirect('dashboard')
+        return redirect('admin_dashboard')
 
     if request.method == "POST":
         username = request.POST.get('username')
@@ -113,7 +114,7 @@ def admin_login(request):
             messages.error(request, "You are not authorized to access admin panel.")
         else:
             login(request, user)
-            return redirect('dashboard')
+            return redirect('admin_dashboard')
 
     return render(request, 'admin_login.html')
 
@@ -121,24 +122,6 @@ def admin_logout(request):
     logout(request)
     return redirect('admin_login')
 
-@superuser_required
-def admin_dashboard(request):
-    total_turfs = Turf.objects.count()
-    total_bookings = Booking.objects.count()
-    total_users = User.objects.count()
-
-    total_revenue = Booking.objects.aggregate(Sum('total_price'))['total_price__sum'] or 0
-    total_commission = Booking.objects.aggregate(Sum('platform_commission'))['platform_commission__sum'] or 0
-
-    context = {
-        'total_turfs': total_turfs,
-        'total_bookings': total_bookings,
-        'total_users': total_users,
-        'total_revenue': total_revenue,
-        'total_commission': total_commission,
-    }
-
-    return render(request, 'dashboard.html', context)
 
 @superuser_required
 def admin_view_bookings(request):

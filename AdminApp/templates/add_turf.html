@@ -1,4 +1,4 @@
-{% extends 'dashboard.html' %}
+{% extends 'base_dashboard.html' %}
 {% block content %}
 
 <div class="card card-primary">
@@ -18,6 +18,22 @@
             <div class="form-group">
                 <label>Location</label>
                 <input type="text" class="form-control" name="location" required>
+            </div>
+            <div class="form-group">
+                <label>Select Sports</label>
+
+                <select class="form-control" name="sports" multiple required>
+
+                    {% for sport in sports %}
+
+                    <option value="{{ sport.id }}">
+                        {{ sport.name }}
+                    </option>
+
+                    {% endfor %}
+
+                </select>
+
             </div>
 
             <div class="form-group">

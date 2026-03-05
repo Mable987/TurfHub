@@ -20,12 +20,16 @@ import AdminApp.urls
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns, static
 from TurfBooking import settings
 import Booking.urls
+import OwnerApp.urls
+import UserApp.urls
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('booking/', include('Booking.urls')),  # Include the Booking app URLs
-    path('adminapp/', include(AdminApp.urls)),  # Include the AdminApp URLs
+    path('booking/', include(Booking.urls)),  
+    path('adminapp/', include(AdminApp.urls)),
+    path('ownerapp/', include(OwnerApp.urls)), 
+    path('userapp/', include(UserApp.urls)), 
     
 ]
 urlpatterns += staticfiles_urlpatterns()

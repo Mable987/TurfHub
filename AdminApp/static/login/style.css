@@ -13,11 +13,11 @@ body {
     animation: gradientFlow 15s ease infinite;
     min-height: 100vh;
     display: flex;
-    align-items: center;
+    align-items: flex-start;   /* changed */
     justify-content: center;
     padding: 20px;
     line-height: 1.6;
-    overflow: hidden;
+    overflow-y: auto;          /* changed */
     position: relative;
 }
 
@@ -114,8 +114,9 @@ body {
     max-width: 420px;
     position: relative;
     z-index: 10;
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
-
 .login-card {
     background: rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(20px);
