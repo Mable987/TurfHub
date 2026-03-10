@@ -559,6 +559,22 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+{% if messages %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    {% for message in messages %}
+    Swal.fire({
+        icon: "{{ message.tags }}",
+        title: "{{ message|escapejs }}",
+        timer: 2000,
+        showConfirmButton: false
+    });
+    {% endfor %}
+});
+</script>
+{% endif %}
 
 </body>
 

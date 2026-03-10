@@ -1,7 +1,7 @@
-
 <!doctype html>
 {% load static %}
 <html class="no-js" lang="zxx">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -11,22 +11,23 @@
     <link rel="manifest" href="site.webmanifest">
     <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
 
-	<!-- CSS here -->
-	<link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/slicknav.css' %}">
+    <!-- CSS here -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slicknav.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/flaticon.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/progressbar_barfiller.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/gijgo.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/animated-headline.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/fontawesome-all.min.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/themify-icons.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
-	<link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
 </head>
+
 <body>
     <!-- ? Preloader Start -->
     <div id="preloader-active">
@@ -54,12 +55,12 @@
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav>
                                 <ul id="navigation">
-                                    <li><a href="index.html">Home</a></li>
-                                    <li><a href="listing.html">Catagories</a></li> 
+                                    <li><a href="{% url 'home' %}">Home</a></li>
+                                    <li><a href="{% url 'turf_list' %}">Turfs</a></li>
                                     <li><a href="#">Pages</a>
                                         <ul class="submenu">
                                             <li><a href="directory_details.html">listing Details</a></li>
-                                            <li><a href="listing.html">Catagories</a></li> 
+                                            <li><a href="listing.html">Catagories</a></li>
                                         </ul>
                                     </li>
                                     <li><a href="blog.html">Blog</a>
@@ -72,7 +73,7 @@
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </nav>
-                        </div>          
+                        </div>
                         <!-- Header-btn -->
                         <div class="header-btns d-none d-lg-block f-right">
                             <a href="#" class="mr-40"><i class="ti-user"></i> Log in</a>
@@ -97,8 +98,8 @@
                         <div class="col-xl-10 col-lg-10">
                             <!-- Hero Caption -->
                             <div class="hero__caption pt-100">
-                                <h1>Explore Australia</h1>
-                                <p>Let's uncover the best places to eat, drink, and shop nearest to you.</p>
+                                <h1>Book Your Favorite Turf</h1>
+                                <p>Find and book football, cricket, and badminton turfs near you.</p>
                             </div>
                             <!--Hero form -->
                             <form action="#" class="search-box mb-100">
@@ -118,13 +119,21 @@
                                 </div>
                                 <div class="search-form">
                                     <a href="#"><i class="ti-search"></i> Search</a>
-                                </div>	
-                            </form>	
+                                </div>
+                            </form>
                             <!-- hero category1 img -->
                             <div class="category-img text-center">
-                                <a href="listing.html"> <img src="{% static 'assets/img/gallery/hero_category1.png' %}" alt=""></a>
-                                <a href="listing.html"> <img src="{% static 'assets/img/gallery/hero_category2.png' %}" alt=""></a>
-                                <a href="listing.html"> <img src="{% static 'assets/img/gallery/hero_category3.png' %}" alt=""></a>
+
+                                {% for sport in sports %}
+
+                                <a href="{% url 'turf_list' %}?sport={{ sport.id }}">
+                                    <span class="badge badge-success p-3 m-1">
+                                        {{ sport.name }}
+                                    </span>
+                                </a>
+
+                                {% endfor %}
+
                             </div>
                         </div>
                     </div>
@@ -216,120 +225,41 @@
                         </div>
                     </div>
                 </div>
-                <div class="directory-active">
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/properties1.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/properties2.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/properties3.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/properties3.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="row">
+
+{% for turf in turfs %}
+
+<div class="col-lg-4 col-md-6 col-sm-12">
+    
+    <div class="properties pb-20">
+
+        <div class="properties__card">
+
+            <div class="properties__img overlay1">
+                <a href="{% url 'turf_details' turf.id %}">
+                    <img src="{{ turf.turf_image.url }}" alt="">
+                </a>
+
+                <div class="img-text">
+                    <span>₹{{ turf.price_per_hour }}</span>
+                    <span>OPEN</span>
                 </div>
+            </div>
+
+            <div class="properties__caption">
+                <h3>{{ turf.turf_name }}</h3>
+                <p>{{ turf.location }}</p>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
             </div>
         </div>
         <!--? Popular Directory End -->
@@ -363,7 +293,8 @@
                             </div>
                             <div class="services-cap">
                                 <h5><a href="#">Find Businesses</a></h5>
-                                <p>Discover & connect with great local businesses in your local neighborhood like dentists, hair stylists and more.</p>
+                                <p>Discover & connect with great local businesses in your local neighborhood like
+                                    dentists, hair stylists and more.</p>
                             </div>
                         </div>
                     </div>
@@ -374,7 +305,8 @@
                             </div>
                             <div class="services-cap">
                                 <h5><a href="#">Review Listings</a></h5>
-                                <p>Discover & connect with great local businesses in your local neighborhood like dentists, hair stylists and more.</p>
+                                <p>Discover & connect with great local businesses in your local neighborhood like
+                                    dentists, hair stylists and more.</p>
                             </div>
                         </div>
                     </div>
@@ -385,7 +317,8 @@
                             </div>
                             <div class="services-cap">
                                 <h5><a href="#">Make a Reservation</a></h5>
-                                <p>Discover & connect with great local businesses in your local neighborhood like dentists, hair stylists and more.</p>
+                                <p>Discover & connect with great local businesses in your local neighborhood like
+                                    dentists, hair stylists and more.</p>
                             </div>
                         </div>
                     </div>
@@ -416,7 +349,7 @@
                                     <span>Closed</span>
                                 </div>
                                 <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
+                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
                                 </div>
                             </div>
                             <div class="properties__caption">
@@ -444,7 +377,7 @@
                                     <span>Closed</span>
                                 </div>
                                 <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
+                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
                                 </div>
                             </div>
                             <div class="properties__caption">
@@ -472,7 +405,7 @@
                                     <span>Closed</span>
                                 </div>
                                 <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
+                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
                                 </div>
                             </div>
                             <div class="properties__caption">
@@ -500,7 +433,7 @@
                                     <span>Closed</span>
                                 </div>
                                 <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt=""> 
+                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
                                 </div>
                             </div>
                             <div class="properties__caption">
@@ -543,7 +476,7 @@
                             <div class="location-details">
                                 <a href="#" class="location-btn">Tips</a>
                                 <ul>
-                                    <li>12 March   I   by Alan</li>
+                                    <li>12 March I by Alan</li>
                                 </ul>
                                 <p><a href="blog_details.html">The Best SPA Salons For Your Relaxation</a></p>
                             </div>
@@ -557,7 +490,7 @@
                             <div class="location-details">
                                 <a href="#" class="location-btn">Tips</a>
                                 <ul>
-                                    <li>12 March   I   by Alan</li>
+                                    <li>12 March I by Alan</li>
                                 </ul>
                                 <p><a href="blog_details.html">The Best SPA Salons For Your Relaxation</a></p>
                             </div>
@@ -575,7 +508,8 @@
                         <div class="col-xl-8 col-lg-8 col-md-7">
                             <div class="wantToWork-caption wantToWork-caption2">
                                 <img src="{% static 'assets/img/logo/logo2_footer.png' %}" alt="" class="mb-20">
-                                <p>Users and submit their own items. You can create different packages and by connecting with your
+                                <p>Users and submit their own items. You can create different packages and by connecting
+                                    with your
                                     PayPal or Stripe account charge users for registration to your directory portal.</p>
                             </div>
                         </div>
@@ -603,7 +537,7 @@
                                     <nav>
                                         <ul>
                                             <li><a href="index.html">Home</a></li>
-                                            <li><a href="explore.html">Explore</a></li> 
+                                            <li><a href="explore.html">Explore</a></li>
                                             <li><a href="pages.html">Pages</a></li>
                                             <li><a href="blog.html">Blog</a></li>
                                             <li><a href="contact.html">Contact</a></li>
@@ -631,8 +565,12 @@
                             <div class="col-xl-10 col-lg-9 ">
                                 <div class="footer-copy-right">
                                     <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                                        Copyright &copy;
+                                        <script>document.write(new Date().getFullYear());</script> All rights reserved |
+                                        This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a
+                                            href="https://colorlib.com" target="_blank">Colorlib</a>
+                                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -643,7 +581,7 @@
     </footer>
 
     <!-- Scroll Up -->
-    <div id="back-top" >
+    <div id="back-top">
         <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
     </div>
 
@@ -691,6 +629,7 @@
     <script src="{% static 'assets/js/main.js' %}"></script>
 
 
-    
-    </body>
+
+</body>
+
 </html>

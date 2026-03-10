@@ -2,7 +2,7 @@
 {% block content %}
 
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-12">
         <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">Edit Turf</h3>
@@ -14,20 +14,51 @@
 
                     <div class="form-group">
                         <label>Turf Name</label>
-                        <input type="text" name="turf_name" class="form-control"
-                               value="{{ turf.turf_name }}">
+                        <input type="text" name="turf_name" class="form-control" value="{{ turf.turf_name }}">
                     </div>
 
                     <div class="form-group">
                         <label>Location</label>
-                        <input type="text" name="location" class="form-control"
-                               value="{{ turf.location }}">
+                        <input type="text" name="location" class="form-control" value="{{ turf.location }}">
+                    </div>
+                    <div class="form-group">
+                        <label>City</label>
+                        <input type="text" name="city" class="form-control" value="{{ turf.city }}">
+                    </div>
+                    <div class="form-group">
+                        <label>State</label>
+                        <input type="text" name="state" class="form-control" value="{{ turf.state }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Select Sports</label>
+
+                        {% for sport in sports %}
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="sports" value="{{ sport.id }}"
+                                id="sport{{ sport.id }}" {% if sport in turf.sports.all %}checked{% endif %}>
+
+                            <label class="form-check-label" for="sport{{ sport.id }}">
+                                {{ sport.name }}
+                            </label>
+                        </div>
+                        {% endfor %}
+
                     </div>
 
                     <div class="form-group">
                         <label>Price Per Hour</label>
-                        <input type="number" name="price" class="form-control"
-                               value="{{ turf.price_per_hour }}">
+                        <input type="number" name="price" class="form-control" value="{{ turf.price_per_hour }}">
+                    </div>
+                    <div class="form-group">
+                        <label>Opening Time</label>
+                        <input type="time" name="opening_time" class="form-control"
+                            value="{{ turf.opening_time|time:'H:i' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Closing Time</label>
+                        <input type="time" name="closing_time" class="form-control"
+                            value="{{ turf.closing_time|time:'H:i' }}">
                     </div>
 
                     <div class="form-group">

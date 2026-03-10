@@ -45,7 +45,7 @@
                                 {% endif %}
                             </td>
                             <td>
-                                {% if turf.is_active %}
+                                {% if t.is_active %}
                                 <span class="badge badge-success">Active</span>
                                 {% else %}
                                 <span class="badge badge-danger">Inactive</span>
@@ -53,18 +53,17 @@
                             </td>
 
                             <td>
-                                {% if turf.owner %}
-                                {{ turf.owner.username }}
+                                {% if t.owner %}
+                                {{ t.owner.username }}
                                 {% else %}
                                 No Owner
                                 {% endif %}
                             </td>
                             <td>
                                 <a href="{% url 'edit_turf' turf_id=t.id %}" class="btn btn-outline-primary">Edit</a>
-                                <a href="{% url 'delete_turf' t.id %}" class="btn btn-outline-danger btn"
-                                    onclick="return confirm('Are you sure you want to delete this turf?');">
+                                <button onclick="deleteTurf({{ t.id }})" class="btn btn-danger">
                                     Delete
-                                </a>
+                                </button>
                                 {% if t.is_active %}
                                 <a href="{% url 'toggle_turf_status' t.id %}" class="btn btn-sm btn-danger">
                                     Deactivate
@@ -88,5 +87,28 @@
         <!-- /.card -->
     </div>
 </div>
+<script>
+    function deleteTurf(id) {
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This turf will be deleted!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#6c757d",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+
+            if (result.isConfirmed) {
+
+                window.location.href = "/adminapp/delete_turf/" + id + "/";
+
+            }
+
+        });
+
+    }
+</script>
 
 {% endblock %}

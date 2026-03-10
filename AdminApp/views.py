@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from Booking.models import Turf,Booking
+from Booking.models import Turf,Booking,Sport
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
@@ -31,32 +31,42 @@ def admin_dashboard(request):
 @superuser_required
 def add_turf(request):
 
+    sports = Sport.objects.all()   # get all sports
+
     if request.method == "POST":
+
         turf_name = request.POST.get('turf_name')
         location = request.POST.get('location')
+        city = request.POST.get('city')
+        state = request.POST.get('state')
         price = request.POST.get('price')
         description = request.POST.get('description')
+        opening_time = request.POST.get('opening_time')
+        closing_time = request.POST.get('closing_time')
         turf_image = request.FILES.get('turf_image')
 
-        sports_ids = request.POST.getlist('sports')   
+        selected_sports = request.POST.getlist('sports')
 
-        turf = Turf.objects.create(                   
+        turf = Turf.objects.create(
             turf_name=turf_name,
             location=location,
+            city=city,
+            state=state,    
             price_per_hour=price,
             description=description,
+            opening_time=opening_time,
+            closing_time=closing_time,
             turf_image=turf_image
         )
 
-        turf.sports.set(sports_ids)                   
-
+        turf.sports.set(selected_sports)
         messages.success(request, "Turf added successfully!")
         return redirect('add_turf')
 
-    return render(request, 'add_turf.html')
+    return render(request, "add_turf.html", {"sports": sports})
 @superuser_required
 def view_turfs(request):
-    turfs = Turf.objects.all().order_by('-id')
+    turfs = Turf.objects.select_related('owner').prefetch_related('sports').order_by('-id')
 
     context = {
         'turfs': turfs
@@ -66,28 +76,39 @@ def view_turfs(request):
 
 @superuser_required
 def edit_turf(request, turf_id):
+
     turf = get_object_or_404(Turf, id=turf_id)
+    sports = Sport.objects.all()
 
     if request.method == "POST":
+
         turf.turf_name = request.POST.get('turf_name')
         turf.location = request.POST.get('location')
-        turf.price_per_hour = request.POST.get('price')
+        turf.city = request.POST.get('city')
+        turf.state = request.POST.get('state')
+        turf.price_per_hour = float(request.POST.get('price'))
         turf.description = request.POST.get('description')
+
+        opening_time = request.POST.get('opening_time')
+        closing_time = request.POST.get('closing_time')
+
+        turf.opening_time = opening_time if opening_time else None
+        turf.closing_time = closing_time if closing_time else None
 
         if request.FILES.get('turf_image'):
             turf.turf_image = request.FILES.get('turf_image')
 
         turf.save()
 
+        selected_sports = request.POST.getlist('sports')
+        turf.sports.set(selected_sports)
         messages.success(request, "Turf updated successfully!")
         return redirect('view_turfs')
 
-    context = {
-        'turf': turf
-    }
-
-    return render(request, 'edit_turf.html', context)
-
+    return render(request, "edit_turf.html", {
+        "turf": turf,
+        "sports": sports
+    })
 @superuser_required
 def delete_turf(request, turf_id):
     turf = get_object_or_404(Turf, id=turf_id)

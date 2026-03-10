@@ -25,6 +25,8 @@ class Turf(models.Model):
 
     turf_name = models.CharField(max_length=100)
     location = models.CharField(max_length=200)
+    city = models.CharField(max_length=100, blank=True, null=True)
+    state = models.CharField(max_length=100, blank=True, null=True)
 
     sports = models.ManyToManyField(Sport, blank=True)
 
@@ -80,18 +82,22 @@ class Booking(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.turf.turf_name}"
+    class Meta:
+        indexes = [
+            models.Index(fields=['turf', 'date']),
+        ]
 
     def clean(self):
 
-    # 1️⃣ Prevent past date booking
+    #  Prevent past date booking
         if self.date < timezone.now().date():
             raise ValidationError("You cannot book a past date.")
 
-    # 2️⃣ Prevent invalid time range
+    #  Prevent invalid time range
         if self.start_time >= self.end_time:
             raise ValidationError("End time must be after start time.")
 
-    # 3️⃣ Check overlapping bookings
+    #  Check overlapping bookings
         overlapping_bookings = Booking.objects.filter(
             turf=self.turf,
             date=self.date,
@@ -108,7 +114,7 @@ class Booking(models.Model):
             raise ValidationError("This time slot is already booked.")
 
     def save(self, *args, **kwargs):
-        self.full_clean()  # Important: run clean()
+        self.full_clean() 
 
         start = datetime.combine(self.date, self.start_time)
         end = datetime.combine(self.date, self.end_time)
@@ -122,3 +128,22 @@ class Booking(models.Model):
         self.owner_amount = self.total_price - self.platform_commission
 
         super().save(*args, **kwargs)
+        
+class Review(models.Model):
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    turf = models.ForeignKey(
+        Turf,
+        on_delete=models.CASCADE,
+        related_name="reviews"
+    )
+
+    rating = models.IntegerField()  # 1 to 5
+
+    comment = models.TextField()
+
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.turf.turf_name}"        
