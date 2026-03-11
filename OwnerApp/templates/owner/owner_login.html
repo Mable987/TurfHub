@@ -42,7 +42,7 @@
                 <p>Sign in to continue your journey</p>
             </div>
 
-            <form class="login-form" id="loginForm" method="post" action="{% url 'owner_login' %}">
+            <form class="login-form" id="loginForm" method="post" action="{% url 'owner:owner_login' %}">
                 {% csrf_token %}
                 <div class="form-group">
                     <div class="input-container">
@@ -111,7 +111,7 @@
                 </button>
                 <div style="text-align:center; margin-top:20px;">
                     <p>Don't have an account?
-                        <a href="{% url 'owner_signup' %}" style="color:#4facfe; font-weight:500;">
+                        <a href="{% url 'owner:owner_signup' %}" style="color:#4facfe; font-weight:500;">
                             Sign Up
                         </a>
                     </p>

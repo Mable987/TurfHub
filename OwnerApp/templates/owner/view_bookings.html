@@ -1,0 +1,80 @@
+{% extends 'owner/base_owner_dashboard.html' %}
+
+{% block content %}
+
+<h1>My Turf Bookings</h1>
+
+<div class="row">
+    <div class="col-12">
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Bookings</h3>
+            </div>
+
+            <div class="card-body table-responsive p-0">
+
+                <table class="table table-hover text-nowrap">
+
+                    <thead>
+                        <tr>
+                            <th>User Name</th>
+                            <th>Turf Name</th>
+                            <th>Booking Date</th>
+                            <th>Time Slot</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Payment</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for booking in bookings %}
+
+                        <tr>
+                            <td>{{ booking.user.username }}</td>
+                            <td>{{ booking.turf.turf_name }}</td>
+                            <td>{{ booking.date }}</td>
+                            <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+                            <td>₹{{ booking.total_price }}</td>
+
+                            <td>
+                                {% if booking.status == "confirmed" %}
+                                <span class="badge badge-success">Confirmed</span>
+                                {% elif booking.status == "pending" %}
+                                <span class="badge badge-warning">Pending</span>
+                                {% elif booking.status == "cancelled" %}
+                                <span class="badge badge-danger">Cancelled</span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if booking.payment_status == "paid" %}
+                                <span class="badge badge-success">Paid</span>
+                                {% else %}
+                                <span class="badge badge-secondary">{{ booking.payment_status }}</span>
+                                {% endif %}
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="7">No bookings found.</td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

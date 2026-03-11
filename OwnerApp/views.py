@@ -54,14 +54,13 @@ def owner_login(request):
 
         else:
             login(request, user)
-            return redirect('owner/dashboard')
+            return redirect('owner:owner_dashboard')
 
     return render(request, "owner/owner_login.html")
 def owner_logout(request):
     logout(request)
-    return redirect('owner_login')        
-
-    return render(request, 'owner/owner_login.html')     
+    return redirect('owner:owner_login')        
+     
 def owner_signup(request):
 
     if request.method == "POST":
@@ -84,10 +83,10 @@ def owner_signup(request):
         user.save()
 
         messages.success(request, "Account created successfully")
-        return redirect('owner_login')
+        return redirect('owner:owner_login')
 
     return render(request, 'owner/owner_signup.html')
-
+@owner_required
 def owner_add_turf(request):
 
     sports = Sport.objects.all()
@@ -98,18 +97,22 @@ def owner_add_turf(request):
             owner=request.user,
             turf_name=request.POST.get('turf_name'),
             location=request.POST.get('location'),
+            city=request.POST.get('city'),
+            state=request.POST.get('state'),
             price_per_hour=request.POST.get('price'),
+            opening_time=request.POST.get('opening_time'),
+            closing_time=request.POST.get('closing_time'),
             description=request.POST.get('description'),
             turf_image=request.FILES.get('turf_image')
-        )
+)
 
         selected_sports = request.POST.getlist('sports')
         turf.sports.set(selected_sports)
 
-        return redirect('view_turfs')
+        return redirect('owner:owner_add_turf')
 
-    return render(request, 'add_turf.html', {'sports': sports})
-@login_required(login_url='owner_login')
+    return render(request, 'owner/add_turf.html', {'sports': sports})
+@owner_required
 def owner_view_turfs(request):
 
     turfs = Turf.objects.filter(owner=request.user)
@@ -137,7 +140,7 @@ def owner_edit_turf(request, turf_id):
 
         turf.save()
 
-        return redirect('owner_view_turfs')
+        return redirect('owner:owner_view_turfs')
 
     return render(request, "owner/edit_turf.html", {"turf": turf})
 def owner_update_turf(request, turf_id):
@@ -160,7 +163,7 @@ def owner_update_turf(request, turf_id):
         selected_sports = request.POST.getlist("sports")
         turf.sports.set(selected_sports)
 
-        return redirect("view_turfs")
+        return redirect('owner:owner_view_turfs')
 @login_required(login_url='owner_login')
 def owner_delete_turf(request, turf_id):
 
@@ -168,4 +171,17 @@ def owner_delete_turf(request, turf_id):
 
     turf.delete()
 
-    return redirect('owner_view_turfs')   
+    return redirect('owner:owner_view_turfs')  
+ 
+@owner_required
+def owner_view_bookings(request):
+
+    bookings = Booking.objects.filter(
+        turf__owner=request.user
+    ).select_related('user', 'turf').order_by('-created_at')
+
+    context = {
+        "bookings": bookings
+    }
+
+    return render(request, "owner/view_bookings.html", context)

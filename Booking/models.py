@@ -4,6 +4,7 @@ from datetime import datetime
 from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.utils import timezone
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Sport(models.Model):
@@ -89,15 +90,30 @@ class Booking(models.Model):
 
     def clean(self):
 
-    #  Prevent past date booking
+        if not self.turf.is_active:
+            raise ValidationError("This turf is currently unavailable.")
+
+    # Prevent past date booking
         if self.date < timezone.now().date():
             raise ValidationError("You cannot book a past date.")
 
-    #  Prevent invalid time range
+    # Prevent past time today
+        if self.date == timezone.now().date() and self.start_time <= timezone.now().time():
+            raise ValidationError("Cannot book a past time today.")
+
+    # Prevent invalid time range
         if self.start_time >= self.end_time:
             raise ValidationError("End time must be after start time.")
 
-    #  Check overlapping bookings
+    # Opening time check
+        if self.turf.opening_time and self.start_time < self.turf.opening_time:
+            raise ValidationError("Booking before opening time.")
+
+    # Closing time check
+        if self.turf.closing_time and self.end_time > self.turf.closing_time:
+            raise ValidationError("Booking after closing time.")
+
+    # Overlap check
         overlapping_bookings = Booking.objects.filter(
             turf=self.turf,
             date=self.date,
@@ -139,11 +155,16 @@ class Review(models.Model):
         related_name="reviews"
     )
 
-    rating = models.IntegerField()  # 1 to 5
+    rating = models.IntegerField(
+    validators=[MinValueValidator(1), MaxValueValidator(5)]
+)
 
     comment = models.TextField()
 
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.turf.turf_name}"        
+        return f"{self.user.username} - {self.turf.turf_name}" 
+     
+    class Meta:
+        unique_together = ['user', 'turf']      

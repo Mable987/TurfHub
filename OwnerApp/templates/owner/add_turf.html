@@ -6,7 +6,7 @@
         <h3 class="card-title">Add Turf</h3>
     </div>
 
-    <form method="post" action="{% url 'owner_add_turf' %}" enctype="multipart/form-data">
+    <form method="post" action="{% url 'owner:owner_add_turf' %}" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="card-body">
 
@@ -19,22 +19,30 @@
                 <label>Location</label>
                 <input type="text" class="form-control" name="location" required>
             </div>
-             {% for sport in sports %}
-            <div class="form-check">
-                <input class="form-check-input"
-                       type="checkbox"
-                       name="sports"
-                       value="{{ sport.id }}">
-
-                <label class="form-check-label">
-                    {{ sport.name }}
-                </label>
-            </div>
-            {% endfor %}
-
             <div class="form-group">
-                <label>Turf Type</label>
-                <input type="text" class="form-control" name="turf_type">
+                <label>City</label>
+                <input type="text" class="form-control" name="city" required>
+            </div>
+            <div class="form-group">
+                <label>State</label>
+                <input type="text" class="form-control" name="state" required>
+            </div>
+            <div class="form-group">
+                <label>Select Sports</label>
+
+                {% for sport in sports %}
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="sports" value="{{ sport.id }}"
+                        id="sport{{ sport.id }}">
+
+                    <label class="form-check-label" for="sport{{ sport.id }}">
+                        {{ sport.name }}
+                    </label>
+                </div>
+
+                {% endfor %}
+
             </div>
 
             <div class="form-group">

@@ -66,8 +66,8 @@
                                 {% endif %}
                             </td>
                             <td>
-                                <a href="{% url 'owner_edit_turf' t.id %}" class="btn btn-outline-primary">Edit</a>
-                                <a href="{% url 'owner_delete_turf' t.id %}" class="btn btn-outline-danger btn"
+                                <a href="{% url 'owner:owner_edit_turf' t.id %}" class="btn btn-outline-primary">Edit</a>
+                                <a href="{% url 'owner:owner_delete_turf' t.id %}" class="btn btn-outline-danger btn"
                                     onclick="return confirm('Are you sure you want to delete this turf?');">
                                     Delete
                                 </a>

@@ -101,25 +101,42 @@
                                 <h1>Explore what you are finding</h1>
                             </div>
                             <!--Hero form -->
-                            <form action="#" class="search-box mb-100">
-                                <div class="input-form">
-                                    <input type="text" placeholder="What are you finding?">
-                                </div>
-                                <div class="select-form">
-                                    <div class="select-itms">
-                                        <select name="select" id="select1">
-                                            <option value="">In where?</option>
-                                            <option value="">Catagories One</option>
-                                            <option value="">Catagories Two</option>
-                                            <option value="">Catagories Three</option>
-                                            <option value="">Catagories Four</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="search-form">
-                                    <a href="#"><i class="ti-search"></i> Search</a>
-                                </div>
-                            </form>
+                     <form action="{% url 'turf_list' %}" method="GET" class="search-box mb-100">
+
+<div class="input-form">
+<input type="text" name="city" placeholder="Enter City"
+value="{{ city|default:'' }}">
+</div>
+
+<div class="input-form">
+<input type="text" name="state" placeholder="Enter State"
+value="{{ state|default:'' }}">
+</div>
+
+<div class="select-form">
+<div class="select-itms">
+<select name="sport">
+
+<option value="">Choose Sport</option>
+
+{% for sport in sports %}
+<option value="{{ sport.id }}"
+{% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
+{{ sport.name }}
+</option>
+{% endfor %}
+
+</select>
+</div>
+</div>
+
+<div class="search-form">
+<button type="submit" class="btn">
+<i class="ti-search"></i> Search
+</button>
+</div>
+
+</form>
                         </div>
                     </div>
                 </div>
@@ -133,61 +150,9 @@
             <div class="container">
                 <div class="row">
                     <!--? Left content -->
-                    <div class="col-xl-4 col-lg-4 col-md-6">
-                        <div class="row">
-                            <div class="col-12">
-                                <div class="small-section-tittle2 mb-45">
-                                    <h4>Advanced Filter</h4>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Job Category Listing start -->
-                        <form method="GET" action="{% url 'turf_list' %}">
 
-                            <div class="select-job-items2 mb-3">
-
-                                <input type="text" name="city" class="form-control" placeholder="Enter City"
-                                    value="{{ city|default:'' }}">
-
-                            </div>
-
-
-                            <div class="select-job-items2 mb-3">
-
-                                <input type="text" name="state" class="form-control" placeholder="Enter State"
-                                    value="{{ state|default:'' }}">
-
-                            </div>
-
-
-                            <div class="select-job-items2 mb-3">
-
-                                <select name="sport" class="form-control">
-
-                                    <option value="">All Sports</option>
-
-                                    {% for sport in sports %}
-
-                                    <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
-                                        {{ sport.name }}
-                                    </option>
-
-                                    {% endfor %}
-
-                                </select>
-
-                            </div>
-
-
-                            <button type="submit" class="btn btn-primary w-100">
-                                Apply Filter
-                            </button>
-
-                        </form>
-                        <!-- Job Category Listing End -->
-                    </div>
                     <!--?  Right content -->
-                    <div class="col-xl-8 col-lg-8 col-md-6">
+                    <div class="col-xl-12">
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="count mb-35">
@@ -464,7 +429,25 @@
     <!-- Jquery Plugins, main Jquery -->
     <script src="{% static 'assets/js/plugins.js' %}"></script>
     <script src="{% static 'assets/js/main.js' %}"></script>
+<style>
+    .search-box{
+display:flex;
+align-items:center;
+gap:15px;
+}
 
+.search-box .input-form{
+flex:1;
+}
+
+.search-box .select-form{
+flex:1;
+}
+
+.search-box .search-form{
+flex:0 0 auto;
+}
+</style>
 
 </body>
 
