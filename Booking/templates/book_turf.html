@@ -1,0 +1,423 @@
+<!doctype html>
+{% load static %}
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>DirectoryListing</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slicknav.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/hamburgers.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+</head>
+
+<body>
+    <!--? Preloader Start -->
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="{% static 'assets/img/logo/loder.png' %}" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Preloader Start -->
+    <header>
+        <!-- Header Start -->
+        <div class="header-area header-transparent">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="menu-wrapper d-flex align-items-center justify-content-between">
+                        <!-- Logo -->
+                        <div class="logo">
+                            <a href="index.html"><img src="{% static 'assets/img/logo/logo.png' %}" alt=""></a>
+                        </div>
+                        <!-- Main-menu -->
+                        <div class="main-menu f-right d-none d-lg-block">
+                            <nav>
+                                <ul id="navigation">
+                                    <li><a href="{% url 'home' %}">Home</a></li>
+                                    <li><a href="listing.html">Catagories</a></li>
+                                    <li><a href="#">Pages</a>
+                                        <ul class="submenu">
+                                            <li><a href="directory_details.html">listing Details</a></li>
+                                            <li><a href="listing.html">Catagories</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="blog.html">Blog</a>
+                                        <ul class="submenu">
+                                            <li><a href="blog.html">Blog</a></li>
+                                            <li><a href="blog_details.html">Blog Details</a></li>
+                                            <li><a href="elements.html">Elements</a></li>
+                                        </ul>
+                                    </li>
+                                    <li><a href="contact.html">Contact</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        <!-- Header-btn -->
+                        <div class="header-btns d-none d-lg-block f-right">
+                            <a href="#" class="mr-40"><i class="ti-user"></i> Log in</a>
+                            <a href="#" class="btn">Add Listing</a>
+                        </div>
+                        <!-- Mobile Menu -->
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Header End -->
+    </header>
+    <main>
+        <!--? Hero Start -->
+        <div class="slider-area2">
+            <div class="slider-height3  hero-overly hero-bg4 d-flex align-items-center">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-xl-12">
+                            <div class="hero-cap2 pt-20 text-center">
+                                <h2>Book Your Turf</h2>
+                                <p class="text-white">Choose your sport, select time and reserve your slot instantly</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Hero End -->
+        <!--? Blog Area Start -->
+        <div class="container mt-5 mb-5">
+            <div class="row justify-content-center">
+                <div class="col-lg-6">
+                    {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-danger">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                    {% endif %}
+
+
+                    <form method="POST" class="p-4 shadow rounded bg-white">
+                        {% csrf_token %}
+                        <div class="turf-header">
+                            <h3 class="turf-name">{{ turf.turf_name }}</h3>
+                            <p class="turf-city">
+                                <i class="fas fa-map-marker-alt"></i> {{ turf.city }}
+                            </p>
+                            <p class="text-muted">
+                                Open: {{ turf.opening_time }} - {{ turf.closing_time }}
+                            </p>
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="form-label">Sport</label>
+                            <select name="sport" class="form-control w-100">
+                                {% for sport in turf.sports.all %}
+                                <option value="{{ sport.id }}">{{ sport.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" name="date" class="form-control">
+                        </div>
+
+
+                        <div class="mb-3">
+                            <label class="form-label">Start Time</label>
+                            <input type="time" name="start_time" class="form-control" min="{{ turf.opening_time }}"
+                                max="{{ turf.closing_time }}" required>
+
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Duration</label>
+
+                            <div class="d-flex align-items-center">
+                                <button type="button" class="btn btn-light" onclick="decreaseHour()">-</button>
+
+                                <span id="duration" class="mx-3">1 Hr</span>
+
+                                <button type="button" class="btn btn-success" onclick="increaseHour()">+</button>
+                            </div>
+
+                            <input type="hidden" name="duration" id="duration_input" value="1">
+                        </div>
+
+
+
+
+                        <button class="btn btn-success w-100">
+                            Add To Cart
+                        </button>
+
+                    </form>
+
+                </div>
+                <div class="col-lg-5">
+                    {% if cart_items %}
+                    <div class="card shadow-sm">
+
+                        <div class="card-header d-flex justify-content-between">
+                            <h5>Cart ({{ cart_items|length }})</h5>
+                            <a href="{% url 'clear_cart' turf.id %}">
+                                <i class="fas fa-trash text-danger"></i>
+                            </a>
+                        </div>
+
+                        <div class="card-body">
+
+                            {% for item in cart_items %}
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <div>
+
+                                    <p>
+                                        <strong>{{ item.turf.turf_name }}</strong>
+                                    </p>
+
+                                    <p>
+                                        <i class="fa fa-calendar"></i>
+                                        {{ item.date }}
+                                    </p>
+
+                                    <p>
+                                        <i class="fa fa-clock"></i>
+                                        {{ item.start_time }} - {{ item.end_time }}
+                                    </p>
+
+                                    <p>
+                                        <i class="fas fa-rupee-sign"></i>
+                                        ₹{{ item.turf.price_per_hour|floatformat:0 }} × {{ item.duration }} Hr
+
+                                    </p>
+
+                                </div>
+
+                                <a href="{% url 'remove_cart_item' item.id %}">
+                                    <i class="fas fa-times text-danger"></i>
+                                </a>
+
+                            </div>
+
+                            <hr>
+
+                            {% endfor %}
+                            <a class="btn btn-success w-100" href="{% url 'booking_summary' %}">
+                                Proceed ₹{{ cart_total }}
+                            </a>
+
+                        </div>
+
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Blog Area End -->
+        <!-- Want To work 02-->
+        <section class="wantToWork-area">
+            <div class="container">
+                <div class="wants-wrapper w-padding2">
+                    <div class="row justify-content-between">
+                        <div class="col-xl-8 col-lg-8 col-md-7">
+                            <div class="wantToWork-caption wantToWork-caption2">
+                                <img src="{% static 'assets/img/logo/logo2_footer.png' %}" alt="" class="mb-20">
+                                <p>Users and submit their own items. You can create different packages and by connecting
+                                    with your
+                                    PayPal or Stripe account charge users for registration to your directory portal.</p>
+                            </div>
+                        </div>
+                        <div class="col-xl-4 col-lg-4 col-md-5">
+                            <div class="footer-social f-right sm-left">
+                                <a href="#"><i class="fab fa-twitter"></i></a>
+                                <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
+                                <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                                <a href="#"><i class="fab fa-instagram"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Want To work End -->
+        <!-- Want To work 01-->
+        <section class="wantToWork-area">
+            <div class="container">
+                <div class="wants-wrapper">
+                    <div class="row align-items-center justify-content-between">
+                        <div class="col-xl-7 col-lg-9 col-md-8">
+                            <div class="wantToWork-caption wantToWork-caption2">
+                                <div class="main-menu2">
+                                    <nav>
+                                        <ul>
+                                            <li><a href="index.html">Home</a></li>
+                                            <li><a href="explore.html">Explore</a></li>
+                                            <li><a href="pages.html">Pages</a></li>
+                                            <li><a href="blog.html">Blog</a></li>
+                                            <li><a href="contact.html">Contact</a></li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4">
+                            <a href="#" class="btn f-right sm-left">Add Listing</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Want To work End -->
+    </main>
+    <footer>
+        <div class="footer-wrapper pt-30">
+            <!-- footer-bottom -->
+            <div class="footer-bottom-area">
+                <div class="container">
+                    <div class="footer-border">
+                        <div class="row d-flex justify-content-between align-items-center">
+                            <div class="col-xl-10 col-lg-9 ">
+                                <div class="footer-copy-right">
+                                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                        Copyright &copy;
+                                        <script>document.write(new Date().getFullYear());</script> All rights reserved |
+                                        This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a
+                                            href="https://colorlib.com" target="_blank">Colorlib</a>
+                                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- Scroll Up -->
+    <div id="back-top">
+        <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
+    </div>
+
+    <!-- JS here -->
+
+    <script src="{% static 'assets/js/vendor/modernizr-3.5.0.min.js' %}"></script>
+    <!-- Jquery, Popper, Bootstrap -->
+    <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <!-- Jquery Mobile Menu -->
+    <script src="{% static 'assets/js/jquery.slicknav.min.js' %}"></script>
+
+    <!-- Jquery Slick , Owl-Carousel Plugins -->
+    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/js/slick.min.js' %}"></script>
+    <!-- One Page, Animated-HeadLin -->
+    <script src="{% static 'assets/js/wow.min.js' %}"></script>
+    <script src="{% static 'assets/js/animated.headline.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.magnific-popup.js' %}"></script>
+
+    <!-- Date Picker -->
+    <script src="{% static 'assets/js/gijgo.min.js' %}"></script>
+    <!-- Nice-select, sticky -->
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.sticky.js' %}"></script>
+
+    <!-- counter , waypoint,Hover Direction -->
+    <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'assets/js/waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'assets/js/hover-direction-snake.min.js' %}"></script>
+
+    <!-- contact js -->
+    <script src="{% static 'assets/js/contact.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.form.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'assets/js/mail-script.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.ajaxchimp.min.js' %}"></script>
+
+    <!-- Jquery Plugins, main Jquery -->
+    <script src="{% static 'assets/js/plugins.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script>
+        let hour = 1;
+
+        function increaseHour() {
+            hour++;
+            document.getElementById("duration").innerText = hour + " Hr";
+            document.getElementById("duration_input").value = hour;
+        }
+
+        function decreaseHour() {
+            if (hour > 1) {
+                hour--;
+                document.getElementById("duration").innerText = hour + " Hr";
+                document.getElementById("duration_input").value = hour;
+            }
+        }
+    </script>
+
+
+    <style>
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .turf-header {
+            text-align: center;
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 25px;
+        }
+
+        .turf-name {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .turf-city {
+            font-size: 15px;
+            color: #6c757d;
+            margin: 0;
+        }
+
+        .turf-city i {
+            color: #28a745;
+            margin-right: 5px;
+        }
+    </style>
+
+</body>
+
+</html>

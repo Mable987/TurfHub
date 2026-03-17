@@ -1,0 +1,144 @@
+<!doctype html>
+{% load static %}
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'login/css/bootstrap.min.css' %}">
+
+<title>TurfHub Login</title>
+
+<style>
+
+body{
+font-family: 'Roboto', sans-serif;
+height:100vh;
+margin:0;
+
+/* Background image */
+background:url("{% static 'login/images/bg_2.jpeg' %}") no-repeat center center/cover;
+
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* Dark overlay */
+body::before{
+content:"";
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.55);
+z-index:-1;
+}
+
+/* Login card */
+.login-card{
+width:420px;
+background:white;
+padding:40px;
+border-radius:12px;
+box-shadow:0 15px 40px rgba(0,0,0,0.3);
+}
+
+/* Heading */
+.login-card h3{
+text-align:center;
+margin-bottom:10px;
+}
+
+.login-card p{
+text-align:center;
+color:#777;
+margin-bottom:25px;
+}
+
+/* Button style */
+.btn-primary{
+background:#12b76a;
+border:none;
+padding:12px;
+font-weight:500;
+}
+
+.btn-primary:hover{
+background:#0ea75c;
+}
+
+/* Social icons */
+.social-login a{
+margin:0 10px;
+font-size:22px;
+color:#666;
+}
+
+.social-login a:hover{
+color:#12b76a;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+<h3>Login to <strong>TurfHub</strong></h3>
+<p>Book your favorite turf instantly</p>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="form-group mb-3">
+<label>Email</label>
+<input type="email" class="form-control" placeholder="your-email@gmail.com" name="email" required>
+</div>
+
+<div class="form-group mb-3">
+<label>Password</label>
+<input type="password" class="form-control" placeholder="Your Password" name="password" required>
+</div>
+
+<div class="d-flex justify-content-between mb-3">
+
+<label>
+<input type="checkbox"> Remember me
+</label>
+
+<a href="#" style="font-size:14px;">Forgot Password</a>
+
+</div>
+
+<input type="submit" value="Log In" class="btn btn-primary btn-block w-100">
+
+<span class="d-block text-center my-4 text-muted">or sign up with</span>
+
+<div class="social-login text-center">
+<a href="#"><span class="icon-facebook"></span></a>
+<a href="#"><span class="icon-twitter"></span></a>
+<a href="#"><span class="icon-google"></span></a>
+</div>
+
+<div class="mt-4 text-center">
+Don't have an account?
+<a href="{% url 'user_signup' %}">Sign Up</a>
+</div>
+
+</form>
+
+</div>
+
+<script src="{% static 'login/js/jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'login/js/bootstrap.min.js' %}"></script>
+
+</body>
+</html>

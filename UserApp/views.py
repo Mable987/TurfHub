@@ -1,8 +1,13 @@
 from django.shortcuts import redirect, render
 from Booking.models import *
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 # Create your views here.
+@login_required(login_url='user_login')
 def home(request):
 
     turfs = Turf.objects.filter(is_active=True)[:6]
@@ -18,11 +23,9 @@ def home(request):
 def turf_list(request):
 
     sports = Sport.objects.all()
-
     selected_sport = request.GET.get('sport')
     city = request.GET.get('city')
     state = request.GET.get('state')
-
     turfs = Turf.objects.filter(is_active=True).prefetch_related('sports')
 
     if city:
@@ -46,9 +49,7 @@ def turf_list(request):
 def turf_details(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id)
-
     reviews = Review.objects.filter(turf=turf).order_by('-created_at')
-
     sports = turf.sports.all()
 
     context = {
@@ -64,7 +65,6 @@ def add_review(request, turf_id):
 
         rating = request.POST.get("rating")
         comment = request.POST.get("comment")
-
         turf = Turf.objects.get(id=turf_id)
 
         Review.objects.create(
@@ -75,3 +75,89 @@ def add_review(request, turf_id):
         )
 
     return redirect('turf_details', turf_id=turf_id)
+
+def user_signup(request):
+
+    if request.method == "POST":
+
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect('user_signup')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered")
+            return redirect('user_signup')
+
+        User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+
+        messages.success(request, "Account created successfully")
+        return redirect('user_login')
+
+    return render(request, "user_signup.html")
+
+def user_login(request):
+
+    if request.method == "POST":
+
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "Invalid email or password")
+            return redirect('user_login')
+
+        user = authenticate(request, username=user.username, password=password)
+
+        if user:
+            login(request, user)
+            return redirect('home')
+
+        messages.error(request, "Invalid email or password")
+
+    return render(request, "user_login.html")
+def user_logout(request):
+    logout(request)
+    return redirect('user_login')
+def profile(request):
+    return render(request,'profile.html')
+
+def my_bookings(request):
+    return render(request,'my_bookings.html')
+@login_required
+def booking_summary(request):
+
+    cart_items = Booking.objects.filter(user=request.user, payment_status='pending')
+
+    total_amount = 0
+    for item in cart_items:
+        total_amount += item.turf.price_per_hour * item.duration
+
+    context = {
+        "cart_items": cart_items,
+        "total_amount": total_amount
+    }
+
+    return render(request, "booking_summary.html", context)
+@login_required
+def confirm_booking(request):
+
+    cart_items = Booking.objects.filter(user=request.user, payment_status='pending')
+
+    total_amount = 0
+    for item in cart_items:
+        total_amount += item.turf.price_per_hour * item.duration
+
+    # redirect to payment page
+    return redirect("payment_page")
+

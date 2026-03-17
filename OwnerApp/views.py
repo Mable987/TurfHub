@@ -141,8 +141,9 @@ def owner_edit_turf(request, turf_id):
         turf.save()
 
         return redirect('owner:owner_view_turfs')
+    sports = Sport.objects.all()
 
-    return render(request, "owner/edit_turf.html", {"turf": turf})
+    return render(request, "owner/edit_turf.html", {"turf": turf, "sports": sports})
 def owner_update_turf(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id)

@@ -1,0 +1,26 @@
+<h2>Booking Summary</h2>
+
+{% for item in cart_items %}
+
+<div class="card mb-3 p-3">
+
+<h4>{{ item.turf.turf_name }}</h4>
+
+<p>Sport: {{ item.sport }}</p>
+
+<p>Date: {{ item.date }}</p>
+
+<p>Time: {{ item.start_time }} - {{ item.end_time }}</p>
+
+<p>Price: ₹{{ item.turf.price_per_hour }}</p>
+
+</div>
+
+{% endfor %}
+
+<h3>Total: ₹{{ total_amount }}</h3>
+
+<form method="POST" action="{% url 'confirm_booking' %}">
+{% csrf_token %}
+<button class="btn btn-success">Confirm Booking</button>
+</form>

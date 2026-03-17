@@ -26,6 +26,16 @@
     <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <style>
+        .user-dropdown {
+            min-width: 180px;
+            font-size: 16px;
+        }
+
+        .user-dropdown .dropdown-item {
+            padding: 12px 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -75,10 +85,44 @@
                             </nav>
                         </div>
                         <!-- Header-btn -->
-                        <div class="header-btns d-none d-lg-block f-right">
-                            <a href="#" class="mr-40"><i class="ti-user"></i> Log in</a>
-                            <a href="#" class="btn">Add Listing</a>
+                        {% if user.is_authenticated %}
+
+                        <div class="dropdown user-menu">
+
+                            <a class="nav-link dropdown-toggle user-btn" href="#" data-toggle="dropdown">
+                                <span class="user-icon">👤</span>
+                                {{ user.username }}
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right user-dropdown">
+
+                                <a class="dropdown-item" href="{% url 'profile' %}">
+                                    👤 Profile
+                                </a>
+
+                                <a class="dropdown-item" href="{% url 'my_bookings' %}">
+                                    🏟 My Bookings
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item logout-item" href="{% url 'user_logout' %}">
+                                    🚪 Logout
+                                </a>
+
+                            </div>
+
                         </div>
+
+                        {% else %}
+
+                        <a href="{% url 'user_login' %}" class="btn btn-primary">Login</a>
+                        <a href="{% url 'user_signup' %}" class="btn btn-success">Sign Up</a>
+
+                        {% endif %}
+
+
+
                         <!-- Mobile Menu -->
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>
@@ -91,7 +135,7 @@
     </header>
     <main>
         <!--? Hero Area Start-->
-        <div class="slider-area hero-bg1 hero-overly">
+        <div class="slider-area hero-bg4 hero-overly">
             <div class="single-slider hero-overly  slider-height1 d-flex align-items-center">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -227,39 +271,39 @@
                 </div>
                 <div class="row">
 
-{% for turf in turfs %}
+                    {% for turf in turfs %}
 
-<div class="col-lg-4 col-md-6 col-sm-12">
-    
-    <div class="properties pb-20">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
 
-        <div class="properties__card">
+                        <div class="properties pb-20">
 
-            <div class="properties__img overlay1">
-                <a href="{% url 'turf_details' turf.id %}">
-                    <img src="{{ turf.turf_image.url }}" alt="">
-                </a>
+                            <div class="properties__card">
 
-                <div class="img-text">
-                    <span>₹{{ turf.price_per_hour }}</span>
-                    <span>OPEN</span>
+                                <div class="properties__img overlay1">
+                                    <a href="{% url 'turf_details' turf.id %}">
+                                        <img src="{{ turf.turf_image.url }}" alt="">
+                                    </a>
+
+                                    <div class="img-text">
+                                        <span>₹{{ turf.price_per_hour }}</span>
+                                        <span>OPEN</span>
+                                    </div>
+                                </div>
+
+                                <div class="properties__caption">
+                                    <h3>{{ turf.turf_name }}</h3>
+                                    <p>{{ turf.location }}</p>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% endfor %}
+
                 </div>
-            </div>
-
-            <div class="properties__caption">
-                <h3>{{ turf.turf_name }}</h3>
-                <p>{{ turf.location }}</p>
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
-{% endfor %}
-
-</div>
             </div>
         </div>
         <!--? Popular Directory End -->

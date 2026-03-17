@@ -1,0 +1,93 @@
+{% extends 'owner/base_owner_dashboard.html' %}
+{% block content %}
+
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Edit Turf</h3>
+    </div>
+
+    <form method="post" action="{% url 'owner:owner_edit_turf' turf.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="card-body">
+
+            <div class="form-group">
+                <label>Turf Name</label>
+                <input type="text" class="form-control" name="turf_name" value="{{ turf.turf_name }}" required>
+
+            </div>
+
+            <div class="form-group">
+                <label>Location</label>
+                <input type="text" class="form-control" name="location" value="{{ turf.location }}" required>
+            </div>
+            <div class="form-group">
+                <label>City</label>
+                <input type="text" class="form-control" name="city" value="{{ turf.city }}" required>
+            </div>
+            <div class="form-group">
+                <label>State</label>
+                <input type="text" class="form-control" name="state" value="{{ turf.state }}" required>
+            </div>
+            <div class="form-group">
+                <label>Select Sports</label>
+
+                {% for sport in sports %}
+
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="sports" value="{{ sport.id }}"
+                        id="sport{{ sport.id }}" {% if sport in turf.sports.all %}checked{% endif %}>
+
+
+                    <label class="form-check-label" for="sport{{ sport.id }}">
+                        {{ sport.name }}
+                    </label>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+            <div class="form-group">
+                <label>Price Per Hour</label>
+                <input type="number" class="form-control" name="price" value="{{ turf.price_per_hour  }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Opening Time</label>
+                <input type="time" class="form-control" name="opening_time" value="{{ turf.opening_time|time:'H:i' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Closing Time</label>
+                <input type="time" class="form-control" name="closing_time" value="{{ turf.closing_time|time:'H:i' }}">
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea class="form-control" rows="4" name="description">{{ turf.description }}</textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Current Turf Image</label><br>
+
+                {% if turf.turf_image %}
+                <img src="{{ turf.turf_image.url }}" width="200" class="mb-2">
+                {% endif %}
+
+            </div>
+            <div class="form-group">
+                <label>Change Turf Image</label>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="turf_image">
+                    <label class="custom-file-label">Choose file</label>
+                </div>
+
+            </div>
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Edit Turf</button>
+            </div>
+    </form>
+</div>
+
+{% endblock %}

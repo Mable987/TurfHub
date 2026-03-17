@@ -91,7 +91,7 @@
     </header>
     <main>
         <!--? Hero Area Start-->
-        <div class="slider-area hero-bg3 hero-overly">
+        <div class="slider-area hero-bg4 hero-overly">
             <div class="single-slider   slider-height2 d-flex align-items-end">
                 <div class="container">
                     <div class="directory-details-head">
@@ -218,7 +218,7 @@
                                 Price: ₹ {{ turf.price_per_hour }} / hour
                             </p>
 
-                            <a href="#" class="btn">
+                            <a href="{% url 'book_turf' turf.id %}" class="btn">
                                 Book Now
                             </a>
 
