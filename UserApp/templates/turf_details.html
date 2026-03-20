@@ -55,8 +55,8 @@
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav>
                                 <ul id="navigation">
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-                                    <li><a href="{% url 'turf_list' %}">Turfs</a></li>
+                                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
                                     <li><a href="#">Pages</a>
                                         <ul class="submenu">
                                             <li><a href="directory_details.html">listing Details</a></li>
@@ -218,7 +218,7 @@
                                 Price: ₹ {{ turf.price_per_hour }} / hour
                             </p>
 
-                            <a href="{% url 'book_turf' turf.id %}" class="btn">
+                            <a href="{% url 'booking:book_turf' turf.id %}" class="btn">
                                 Book Now
                             </a>
 

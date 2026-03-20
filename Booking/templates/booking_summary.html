@@ -1,7 +1,7 @@
-
 <!doctype html>
 {% load static %}
 <html class="no-js" lang="zxx">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -25,8 +25,9 @@
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
-    
+
 </head>
+
 <body>
     <!--? Preloader Start -->
     <div id="preloader-active">
@@ -54,12 +55,12 @@
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav>
                                 <ul id="navigation">
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-                                    <li><a href="listing.html">Catagories</a></li> 
+                                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
                                     <li><a href="#">Pages</a>
                                         <ul class="submenu">
                                             <li><a href="directory_details.html">listing Details</a></li>
-                                            <li><a href="listing.html">Catagories</a></li> 
+                                            <li><a href="listing.html">Catagories</a></li>
                                         </ul>
                                     </li>
                                     <li><a href="blog.html">Blog</a>
@@ -72,7 +73,7 @@
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </nav>
-                        </div>          
+                        </div>
                         <!-- Header-btn -->
                         <div class="header-btns d-none d-lg-block f-right">
                             <a href="#" class="mr-40"><i class="ti-user"></i> Log in</a>
@@ -87,96 +88,91 @@
             </div>
         </div>
         <!-- Header End -->
-     </header>
+    </header>
     <main>
         <!--? Hero Start -->
-        
+
         <!-- Hero End -->
         <!--? Blog Area Start-->
         <section class="blog_area section-padding">
-    <div class="container">
-        <div class="row">
+            <div class="container">
+                <div class="row">
 
-            <!-- LEFT SIDE (BOOKING SUMMARY) -->
-            <div class="col-lg-6">
+                    <!-- LEFT SIDE (BOOKING SUMMARY) -->
+                    <div class="col-lg-6">
 
-                {% for item in cart_items %}
-                <div class="card p-4 mb-4">
+                        {% for item in cart_items %}
+                        <div class="card p-4 mb-4">
 
-                    <h4>{{ item.turf.turf_name }}</h4>
-                    <p class="text-muted">{{ item.turf.location }}</p>
+                            <h4>{{ item.turf.turf_name }}</h4>
+                            <p class="text-muted">{{ item.turf.location }}</p>
 
-                    <hr>
+                            <hr>
 
-                    <p>🏟 {{ item.sport }}</p>
-                    <p>📅 {{ item.date }}</p>
-                    <p>⏰ {{ item.start_time }} - {{ item.end_time }}</p>
-                    <p>💰 ₹{{ item.turf.price_per_hour }}</p>
+                            <p>🏟 {{ item.sport }}</p>
+                            <p>📅 {{ item.date }}</p>
+                            <p>⏰ {{ item.start_time }} - {{ item.end_time }}</p>
+                            <p>💰 ₹{{ item.turf.price_per_hour }}</p>
 
-                    <!-- Remove button -->
-                    <a href="{% url 'remove_cart_item' item.id %}" class="text-danger">
-                        ❌ Remove
-                    </a>
+                            <!-- Remove button -->
+                            <a href="{% url 'booking:remove_cart_item' item.id %}" class="text-danger">
+                                ❌ Remove
+                            </a>
 
-                </div>
-                {% endfor %}
+                        </div>
+                        {% endfor %}
 
-                <div class="card p-4">
-                    <h3>Total: ₹{{ total_amount }}</h3>
-                </div>
-
-                <!-- Policies -->
-                <div class="card p-4 mt-4">
-                    <h5>Reschedule Policy :</h5>
-                    <p>Rescheduling allowed up to 2 hours before slot.</p>
-
-                    <h5>Cancellation Policy :</h5>
-                    <p>No cancellation within 3 hours.</p>
-
-                    <h5>Club Policy :</h5>
-                    <p>Follow turf rules and maintain discipline.</p>
-                </div>
-
-            </div>
-
-            <!-- RIGHT SIDE (FORM) -->
-            <div class="col-lg-6">
-
-                <div class="card p-4">
-
-                    <h4>Confirm Your Booking</h4>
-                    <p class="text-muted">Proceed to payment</p>
-
-                    <form method="POST" action="{% url 'confirm_booking' %}">
-                        {% csrf_token %}
-
-                        <div class="form-group">
-                            <label>Name</label>
-                            <input type="text" class="form-control"
-                                   value="{{ request.user.username }}" readonly>
+                        <div class="card p-4">
+                            <h3>Total: ₹{{ total_amount }}</h3>
                         </div>
 
-                        <div class="form-group">
-                            <label>Email</label>
-                            <input type="email" class="form-control"
-                                   value="{{ request.user.email }}" readonly>
+                        <!-- Policies -->
+                        <div class="card p-4 mt-4">
+                            <h5>Reschedule Policy :</h5>
+                            <p>Rescheduling allowed up to 2 hours before slot.</p>
+
+                            <h5>Cancellation Policy :</h5>
+                            <p>No cancellation within 3 hours.</p>
+
+                            <h5>Club Policy :</h5>
+                            <p>Follow turf rules and maintain discipline.</p>
                         </div>
 
-                        <button class="btn btn-success w-100 mt-3">
-                            Confirm & Pay
-                        </button>
+                    </div>
 
-                    </form>
+                    <!-- RIGHT SIDE (FORM) -->
+                    <div class="col-lg-6">
+
+
+
+                        <div class="card p-4">
+
+                            <h4>Confirm Your Booking</h4>
+
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control" value="{{ request.user.username }}" readonly>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" class="form-control" value="{{ request.user.email }}" readonly>
+                            </div>
+
+                            <button type="button" id="pay-btn" class="btn btn-success w-100 mt-3">
+                                Confirm & Pay
+                            </button>
+
+                        </div>
+
+
+                    </div>
 
                 </div>
-
             </div>
-
-        </div>
-    </div>
-</section>
+        </section>
         <!-- Blog Area End -->
-       
+
         <!-- Want To work 01-->
         <section class="wantToWork-area">
             <div class="container">
@@ -188,7 +184,7 @@
                                     <nav>
                                         <ul>
                                             <li><a href="index.html">Home</a></li>
-                                            <li><a href="explore.html">Explore</a></li> 
+                                            <li><a href="explore.html">Explore</a></li>
                                             <li><a href="pages.html">Pages</a></li>
                                             <li><a href="blog.html">Blog</a></li>
                                             <li><a href="contact.html">Contact</a></li>
@@ -215,9 +211,13 @@
                         <div class="row d-flex justify-content-between align-items-center">
                             <div class="col-xl-10 col-lg-9 ">
                                 <div class="footer-copy-right">
-                                   <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
-  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
+                                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                        Copyright &copy;
+                                        <script>document.write(new Date().getFullYear());</script> All rights reserved |
+                                        This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a
+                                            href="https://colorlib.com" target="_blank">Colorlib</a>
+                                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -227,51 +227,115 @@
         </div>
     </footer>
     <!-- Scroll Up -->
-    <div id="back-top" >
+    <div id="back-top">
         <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>
     </div>
-      <!-- JS here -->
+    <!-- JS here -->
 
-      <script src="{% static 'assets/js/vendor/modernizr-3.5.0.min.js' %}"></script>
-      <!-- Jquery, Popper, Bootstrap -->
-      <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
-      <script src="{% static 'assets/js/popper.min.js' %}"></script>
-      <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
-      <!-- Jquery Mobile Menu -->
-      <script src="{% static 'assets/js/jquery.slicknav.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/modernizr-3.5.0.min.js' %}"></script>
+    <!-- Jquery, Popper, Bootstrap -->
+    <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <!-- Jquery Mobile Menu -->
+    <script src="{% static 'assets/js/jquery.slicknav.min.js' %}"></script>
 
-      <!-- Jquery Slick , Owl-Carousel Plugins -->
-      <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
-      <script src="{% static 'assets/js/slick.min.js' %}"></script>
-      <!-- One Page, Animated-HeadLin -->
-      <script src="{% static 'assets/js/wow.min.js' %}"></script>
-      <script src="{% static 'assets/js/animated.headline.js' %}"></script>
-      <script src="{% static 'assets/js/jquery.magnific-popup.js' %}"></script>
+    <!-- Jquery Slick , Owl-Carousel Plugins -->
+    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/js/slick.min.js' %}"></script>
+    <!-- One Page, Animated-HeadLin -->
+    <script src="{% static 'assets/js/wow.min.js' %}"></script>
+    <script src="{% static 'assets/js/animated.headline.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.magnific-popup.js' %}"></script>
 
-      <!-- Date Picker -->
-      <script src="{% static 'assets/js/gijgo.min.js' %}"></script>
-      <!-- Nice-select, sticky -->
-      <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
-      <script src="{% static 'assets/js/jquery.sticky.js' %}"></script>
+    <!-- Date Picker -->
+    <script src="{% static 'assets/js/gijgo.min.js' %}"></script>
+    <!-- Nice-select, sticky -->
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.sticky.js' %}"></script>
 
-      <!-- counter , waypoint,Hover Direction -->
-      <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script>
-      <script src="{% static 'assets/js/waypoints.min.js' %}"></script>
-      <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
-      <script src="{% static 'assets/js/hover-direction-snake.min.js' %}"></script>
+    <!-- counter , waypoint,Hover Direction -->
+    <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'assets/js/waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'assets/js/hover-direction-snake.min.js' %}"></script>
 
-      <!-- contact js -->
-      <script src="{% static 'assets/js/contact.js' %}"></script>
-      <script src="{% static 'assets/js/jquery.form.js' %}"></script>
-      <script src="{% static 'assets/js/jquery.validate.min.js' %}"></script>
-      <script src="{% static 'assets/js/mail-script.js' %}"></script>
-      <script src="{% static 'assets/js/jquery.ajaxchimp.min.js' %}"></script>
-      
-      <!-- Jquery Plugins, main Jquery -->	
-      <script src="{% static 'assets/js/plugins.js' %}"></script>
-      <script src="{% static 'assets/js/main.js' %}"></script>
+    <!-- contact js -->
+    <script src="{% static 'assets/js/contact.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.form.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.validate.min.js' %}"></script>
+    <script src="{% static 'assets/js/mail-script.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.ajaxchimp.min.js' %}"></script>
+
+    <!-- Jquery Plugins, main Jquery -->
+    <script src="{% static 'assets/js/plugins.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            document.getElementById("pay-btn").onclick = function () {
+
+                console.log("Button clicked");
+
+                fetch("{% url 'booking:confirm_booking' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then(res => res.json())
+                    .then(data => {
+
+                        console.log("Response:", data);
+
+                        var options = {
+                            "key": "rzp_test_SQcXicbh6Ouo4p",
+                            "amount": data.amount,
+                            "currency": "INR",
+                            "order_id": data.order_id,
+                            "name": "TurfHub",
+
+                            "handler": function (response) {
+
+                                fetch("{% url 'booking:verify_payment' %}", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "X-CSRFToken": "{{ csrf_token }}"
+                                    },
+                                    body: JSON.stringify({
+                                        razorpay_payment_id: response.razorpay_payment_id,
+                                        razorpay_order_id: response.razorpay_order_id,
+                                        razorpay_signature: response.razorpay_signature
+                                    })
+                                })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.status === "success") {
+                                            window.location.href = "{% url 'booking:booking_success' %}";
+                                        } else {
+                                            alert("Payment verification failed");
+                                        }
+                                    });
+                            }
+                        };
+
+                        var rzp = new Razorpay(options);
+                        rzp.open();
+                    })
+                    .catch(err => {
+                        console.error("Error:", err);
+                    });
+
+            };
+
+        });
+    </script>
 
 
-     
-    </body>
+
+</body>
+
 </html>

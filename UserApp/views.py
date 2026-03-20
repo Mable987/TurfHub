@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 # Create your views here.
-@login_required(login_url='user_login')
+@login_required(login_url='user:user_login')
 def home(request):
 
     turfs = Turf.objects.filter(is_active=True)[:6]
@@ -74,7 +74,7 @@ def add_review(request, turf_id):
             comment=comment
         )
 
-    return redirect('turf_details', turf_id=turf_id)
+    return redirect('user:turf_details', turf_id=turf_id)
 
 def user_signup(request):
 
@@ -87,11 +87,15 @@ def user_signup(request):
 
         if password != confirm_password:
             messages.error(request, "Passwords do not match")
-            return redirect('user_signup')
+            return redirect('user:user_signup')
 
         if User.objects.filter(email=email).exists():
             messages.error(request, "Email already registered")
-            return redirect('user_signup')
+            return redirect('user:user_signup')
+
+        if User.objects.filter(username=username).exists():   
+            messages.error(request, "Username already taken")
+            return redirect('user:user_signup')
 
         User.objects.create_user(
             username=username,
@@ -100,7 +104,7 @@ def user_signup(request):
         )
 
         messages.success(request, "Account created successfully")
-        return redirect('user_login')
+        return redirect('user:user_login')
 
     return render(request, "user_signup.html")
 
@@ -115,49 +119,25 @@ def user_login(request):
             user = User.objects.get(email=email)
         except User.DoesNotExist:
             messages.error(request, "Invalid email or password")
-            return redirect('user_login')
+            return redirect('user:user_login')
 
         user = authenticate(request, username=user.username, password=password)
 
         if user:
             login(request, user)
-            return redirect('home')
+            return redirect('user:home')
 
         messages.error(request, "Invalid email or password")
 
     return render(request, "user_login.html")
 def user_logout(request):
     logout(request)
-    return redirect('user_login')
+    return redirect('user:user_login')
 def profile(request):
     return render(request,'profile.html')
 
 def my_bookings(request):
     return render(request,'my_bookings.html')
-@login_required
-def booking_summary(request):
 
-    cart_items = Booking.objects.filter(user=request.user, payment_status='pending')
 
-    total_amount = 0
-    for item in cart_items:
-        total_amount += item.turf.price_per_hour * item.duration
-
-    context = {
-        "cart_items": cart_items,
-        "total_amount": total_amount
-    }
-
-    return render(request, "booking_summary.html", context)
-@login_required
-def confirm_booking(request):
-
-    cart_items = Booking.objects.filter(user=request.user, payment_status='pending')
-
-    total_amount = 0
-    for item in cart_items:
-        total_amount += item.turf.price_per_hour * item.duration
-
-    # redirect to payment page
-    return redirect("payment_page")
 

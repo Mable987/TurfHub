@@ -3,7 +3,13 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
-from .models import Booking, Turf
+from Booking.models import Booking, Turf
+import razorpay, json, qrcode
+from django.http import JsonResponse, HttpResponse
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from razorpay.errors import SignatureVerificationError
+
 
 
 @login_required
@@ -21,7 +27,7 @@ def book_turf(request, turf_id):
         # prevent empty time submission
         if not start_time_str:
             messages.error(request, "Please select a start time.")
-            return redirect("book_turf", turf_id=turf.id)
+            return redirect("booking:book_turf", turf_id=turf.id)
 
         start_time = datetime.strptime(start_time_str, "%H:%M").time()
         start_datetime = datetime.combine(datetime.today(), start_time)
@@ -29,13 +35,11 @@ def book_turf(request, turf_id):
         end_datetime = start_datetime + timedelta(hours=duration)
         end_time = end_datetime.time()
 
-        # ✅ check turf opening hours safely
         if turf.opening_time and turf.closing_time:
             if start_time < turf.opening_time or end_time > turf.closing_time:
                 messages.error(request, "Selected time is outside turf operating hours.")
-                return redirect("book_turf", turf_id=turf.id)
+                return redirect("booking:book_turf", turf_id=turf.id)
 
-        # ✅ prevent overlapping bookings
         existing_booking = Booking.objects.filter(
             turf=turf,
             date=selected_date,
@@ -45,7 +49,7 @@ def book_turf(request, turf_id):
 
         if existing_booking:
             messages.error(request, "This time slot is already booked.")
-            return redirect("book_turf", turf_id=turf.id)
+            return redirect("booking:book_turf", turf_id=turf.id)
 
         try:
             Booking.objects.create(
@@ -57,16 +61,13 @@ def book_turf(request, turf_id):
                 duration=duration,
                 user=request.user
             )
-
             messages.success(request, "Slot added to cart.")
 
         except ValidationError as e:
             messages.error(request, e.message_dict.get("__all__", ["Slot booking failed"])[0])
-
-    # get all cart items
+   
     cart_items = Booking.objects.filter(user=request.user, turf=turf)
 
-    # calculate total price
     cart_total = 0
     for item in cart_items:
         cart_total += item.turf.price_per_hour * item.duration
@@ -82,14 +83,14 @@ def book_turf(request, turf_id):
 def clear_cart(request, turf_id):
     Booking.objects.filter(user=request.user, turf_id=turf_id).delete()
     messages.info(request, "Cart cleared")
-    return redirect("book_turf", turf_id=turf_id)
+    return redirect("booking:book_turf", turf_id=turf_id)
 def remove_cart_item(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
     turf_id = booking.turf.id
 
     booking.delete()
 
-    return redirect("book_turf", turf_id=turf_id)
+    return redirect("booking:book_turf", turf_id=turf_id)
 @login_required
 def booking_summary(request):
 
@@ -112,21 +113,83 @@ def booking_summary(request):
 @login_required
 def confirm_booking(request):
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return JsonResponse({"error": "Invalid request"}, status=400)
 
-        cart_items = Booking.objects.filter(
+    cart_items = Booking.objects.filter(
+        user=request.user,
+        payment_status='pending'
+    )
+
+    total_amount = sum(
+        item.turf.price_per_hour * item.duration
+        for item in cart_items
+    )
+
+    client = razorpay.Client(auth=(
+        settings.RAZORPAY_KEY_ID,
+        settings.RAZORPAY_KEY_SECRET
+    ))
+
+    order = client.order.create({
+        "amount": int(total_amount * 100),
+        "currency": "INR",
+        "payment_capture": 1
+    })
+
+    return JsonResponse({
+        "order_id": order["id"],
+        "amount": order["amount"]
+    })
+@login_required
+def booking_success(request):
+
+    bookings = Booking.objects.filter(
+        user=request.user,
+        payment_status='paid'
+    ).order_by('-created_at')
+
+    return render(request, "booking_success.html", {"bookings": bookings})
+@csrf_exempt
+@login_required
+def verify_payment(request):
+
+    data = json.loads(request.body)
+
+    client = razorpay.Client(auth=(
+        settings.RAZORPAY_KEY_ID,
+        settings.RAZORPAY_KEY_SECRET
+    ))
+
+    params_dict = {
+        'razorpay_order_id': data['razorpay_order_id'],
+        'razorpay_payment_id': data['razorpay_payment_id'],
+        'razorpay_signature': data['razorpay_signature']
+    }
+
+    try:
+        
+        client.utility.verify_payment_signature(params_dict)
+
+        
+        Booking.objects.filter(
             user=request.user,
             payment_status='pending'
+        ).update(
+            payment_status='paid',
+            status='confirmed',   
+            razorpay_payment_id=data['razorpay_payment_id'],
+            razorpay_order_id=data['razorpay_order_id'],
+            razorpay_signature=data['razorpay_signature']
         )
 
-        total_amount = sum(
-            item.turf.price_per_hour * item.duration
-            for item in cart_items
-        )
+        return JsonResponse({'status': 'success'})
 
-        # 👉 next step: redirect to payment page
-        return render(request, "payment.html", {
-            "amount": total_amount
-        })
-
-    return redirect("booking_summary")
+    except SignatureVerificationError:
+        return JsonResponse({'status': 'failure'})
+def generate_qr(request, booking_id):
+    img = qrcode.make(f"Booking ID: {booking_id}")
+    response = HttpResponse(content_type="image/png")
+    img.save(response, "PNG")
+    return response    
+    

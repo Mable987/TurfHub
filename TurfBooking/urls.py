@@ -26,7 +26,7 @@ urlpatterns = [
     path('booking/', include('Booking.urls')),
     path('adminapp/', include('AdminApp.urls')),
     path('ownerapp/', include('OwnerApp.urls')),
-    path('userapp/', include('UserApp.urls')),
+    path('userapp/', include(('UserApp.urls', 'user'), namespace='user')),
 
 ]
 

@@ -114,10 +114,13 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
+RAZORPAY_KEY_ID = "rzp_test_SQcXicbh6Ouo4p"
+RAZORPAY_KEY_SECRET = "yPk50NrG73QWfgah9qUEI6ak"
 STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+
+LOGIN_URL = '/userapp/login/'
 
 
 # Static files (CSS, JavaScript, Images)

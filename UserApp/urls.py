@@ -1,6 +1,7 @@
 from django.urls import path
 from UserApp import views
 
+appname = "user"
 urlpatterns = [
     path('home/', views.home, name='home'),
     path('turf_list/', views.turf_list, name='turf_list'),
@@ -11,7 +12,6 @@ urlpatterns = [
     path('logout/', views.user_logout, name='user_logout'),
     path('profile/', views.profile, name='profile'),
     path('my_bookings/', views.my_bookings, name='my_bookings'),
-    path('booking_summary/', views.booking_summary, name='booking_summary'),
-    path('confirm_booking/', views.confirm_booking, name='confirm_booking'),
+    
 
 ]

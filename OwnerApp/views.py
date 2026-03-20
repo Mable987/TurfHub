@@ -12,7 +12,7 @@ from django.contrib import messages
 def owner_required(view_func):
     return user_passes_test(
         lambda u: u.is_authenticated and u.is_staff and not u.is_superuser,
-        login_url='owner_login'
+        login_url='owner:owner_login'
     )(view_func)
 
 @owner_required
@@ -36,7 +36,7 @@ def owner_dashboard(request):
     }
 
     return render(request, 'owner/dashboard.html', context)  
-
+@login_required(login_url='owner:owner_login')
 def owner_login(request):
 
     if request.method == "POST":
@@ -123,7 +123,7 @@ def owner_view_turfs(request):
 
     return render(request, "owner/view_turfs.html", context)
 
-@login_required(login_url='owner_login')
+@login_required(login_url='owner:owner_login')
 def owner_edit_turf(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id, owner=request.user)
@@ -165,7 +165,7 @@ def owner_update_turf(request, turf_id):
         turf.sports.set(selected_sports)
 
         return redirect('owner:owner_view_turfs')
-@login_required(login_url='owner_login')
+@login_required(login_url='owner:owner_login')
 def owner_delete_turf(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id, owner=request.user)

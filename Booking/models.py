@@ -5,6 +5,7 @@ from decimal import Decimal
 from django.core.exceptions import ValidationError
 from django.utils import timezone
 from django.core.validators import MinValueValidator, MaxValueValidator
+import uuid
 
 
 class Sport(models.Model):
@@ -28,20 +29,15 @@ class Turf(models.Model):
     location = models.CharField(max_length=200)
     city = models.CharField(max_length=100, blank=True, null=True)
     state = models.CharField(max_length=100, blank=True, null=True)
-
     sports = models.ManyToManyField(Sport, blank=True)
-
     price_per_hour = models.DecimalField(max_digits=8, decimal_places=2)
-
     description = models.TextField()
-
     turf_image = models.ImageField(upload_to='turf_images/', null=True, blank=True)
 
     opening_time = models.TimeField(null=True, blank=True)
     closing_time = models.TimeField(null=True, blank=True)
 
     is_active = models.BooleanField(default=True)
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -67,17 +63,23 @@ class Booking(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     turf = models.ForeignKey(Turf, on_delete=models.CASCADE)
     sport = models.ForeignKey(Sport, on_delete=models.CASCADE)
+    razorpay_order_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_payment_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=255, null=True, blank=True)
+    booking_id = models.CharField(max_length=20,unique=True, blank=True)
 
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
     duration = models.IntegerField(default=1)
-
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
-    status = models.CharField(max_length=20, choices=BOOKING_STATUS, default='confirmed')
+    status = models.CharField(
+        max_length=20,
+        choices=BOOKING_STATUS,
+        default='pending'
+    )
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS, default='pending')
-
     platform_commission = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     owner_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
@@ -132,6 +134,8 @@ class Booking(models.Model):
             raise ValidationError("This time slot is already booked.")
 
     def save(self, *args, **kwargs):
+        if not self.booking_id:
+            self.booking_id = f"TB-{uuid.uuid4().hex[:8].upper()}"
         self.full_clean() 
 
         start = datetime.combine(self.date, self.start_time)

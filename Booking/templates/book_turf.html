@@ -51,8 +51,8 @@
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav>
                                 <ul id="navigation">
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-                                    <li><a href="listing.html">Catagories</a></li>
+                                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
                                     <li><a href="#">Pages</a>
                                         <ul class="submenu">
                                             <li><a href="directory_details.html">listing Details</a></li>
@@ -180,7 +180,7 @@
 
                         <div class="card-header d-flex justify-content-between">
                             <h5>Cart ({{ cart_items|length }})</h5>
-                            <a href="{% url 'clear_cart' turf.id %}">
+                            <a href="{% url 'booking:clear_cart' turf.id %}">
                                 <i class="fas fa-trash text-danger"></i>
                             </a>
                         </div>
@@ -215,7 +215,7 @@
 
                                 </div>
 
-                                <a href="{% url 'remove_cart_item' item.id %}">
+                                <a href="{% url 'booking:remove_cart_item' item.id %}">
                                     <i class="fas fa-times text-danger"></i>
                                 </a>
 
@@ -224,7 +224,7 @@
                             <hr>
 
                             {% endfor %}
-                            <a class="btn btn-success w-100" href="{% url 'booking_summary' %}">
+                            <a class="btn btn-success w-100" href="{% url 'booking:booking_summary' %}">
                                 Proceed ₹{{ cart_total }}
                             </a>
 
