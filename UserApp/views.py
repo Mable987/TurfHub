@@ -120,13 +120,11 @@ def user_login(request):
         except User.DoesNotExist:
             messages.error(request, "Invalid email or password")
             return redirect('user:user_login')
-
         user = authenticate(request, username=user.username, password=password)
 
         if user:
             login(request, user)
             return redirect('user:home')
-
         messages.error(request, "Invalid email or password")
 
     return render(request, "user_login.html")
@@ -136,8 +134,25 @@ def user_logout(request):
 def profile(request):
     return render(request,'profile.html')
 
+@login_required(login_url='user:user_login')
 def my_bookings(request):
-    return render(request,'my_bookings.html')
+
+    now = timezone.now()
+
+    bookings = Booking.objects.filter(
+        user=request.user,
+        payment_status='paid'
+    )
+
+    active_bookings = []
+
+    for booking in bookings:
+        booking_datetime = datetime.combine(booking.date, booking.end_time)
+
+        if booking_datetime > now.replace(tzinfo=None):
+            active_bookings.append(booking)
+
+    return render(request, 'my_bookings.html', {'bookings': active_bookings})
 
 
 

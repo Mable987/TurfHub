@@ -4,11 +4,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from Booking.models import Booking, Turf
-import razorpay, json, qrcode
+import razorpay, json, qrcode, tempfile
 from django.http import JsonResponse, HttpResponse
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from razorpay.errors import SignatureVerificationError
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Table, TableStyle, KeepTogether
+from reportlab.lib.styles import getSampleStyleSheet
+from django.core.mail import send_mail
+from reportlab.lib import colors
+
 
 
 
@@ -169,27 +174,135 @@ def verify_payment(request):
 
     try:
         
-        client.utility.verify_payment_signature(params_dict)
-
-        
-        Booking.objects.filter(
+        client.utility.verify_payment_signature(params_dict)        
+        bookings = Booking.objects.filter(
             user=request.user,
             payment_status='pending'
-        ).update(
-            payment_status='paid',
-            status='confirmed',   
-            razorpay_payment_id=data['razorpay_payment_id'],
-            razorpay_order_id=data['razorpay_order_id'],
-            razorpay_signature=data['razorpay_signature']
         )
+
+        for booking in bookings:
+             if booking.payment_status != 'paid':
+                booking.payment_status = 'paid'
+                booking.status = 'confirmed'
+                booking.razorpay_payment_id = data['razorpay_payment_id']
+                booking.razorpay_order_id = data['razorpay_order_id']
+                booking.razorpay_signature = data['razorpay_signature']
+                booking.save()
+
+                send_booking_email(request.user, booking)
 
         return JsonResponse({'status': 'success'})
 
     except SignatureVerificationError:
         return JsonResponse({'status': 'failure'})
 def generate_qr(request, booking_id):
-    img = qrcode.make(f"Booking ID: {booking_id}")
+    booking = Booking.objects.get(id=booking_id)
+
+    qr_data = {
+        "booking_id": booking.booking_id
+    }
+
+    img = qrcode.make(json.dumps(qr_data))
     response = HttpResponse(content_type="image/png")
     img.save(response, "PNG")
-    return response    
+    return response
+def download_ticket(request, booking_id):
+    booking = Booking.objects.get(id=booking_id)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ticket_{booking.id}.pdf"'
+
+    doc = SimpleDocTemplate(response)
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    # 🎟️ Title
+    elements.append(Paragraph("🎟️ TurfHub Ticket", styles['Title']))
+    elements.append(Spacer(1, 20))
+
+    # 🔳 Generate QR
+    qr_data = {
+        "booking_id": booking.booking_id
+    }
+
+    qr = qrcode.make(json.dumps(qr_data))
+
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+    qr.save(temp_file.name)
+
+    qr_image = Image(temp_file.name, width=120, height=120)
+    qr_inner = Table([
+        [qr_image],
+        [Paragraph("<font color='white'>Scan at entry</font>", styles['Normal'])]
+    ])
+
+    qr_inner.setStyle(TableStyle([
+        ('ALIGN', (0,0), (-1,-1), 'CENTER'),
+    ]))
+
+    # 📄 Right side details
+    details = [
+        Paragraph(f"<b>Name:</b> {booking.user.username}", styles['Normal']),
+        Paragraph(f"<b>{booking.turf.turf_name}</b>", styles['Heading3']),
+        Paragraph(f"{booking.turf.location}", styles['Normal']),
+        Spacer(1, 5),
+        Paragraph(f"🏟 {booking.sport.name}", styles['Normal']),
+        Paragraph(f"📅 {booking.date}", styles['Normal']),
+        Paragraph(f"⏰ {booking.start_time} - {booking.end_time}", styles['Normal']),
+        Paragraph(f"💰 ₹{booking.total_price}", styles['Normal']),
+        Spacer(1, 5),
+        Paragraph(f"<b>Booking ID:</b> {booking.booking_id}", styles['Normal']),
+    ]
+
+    # 🧱 Table layout (QR left, details right)
+    table = Table(
+        [[qr_inner,"", details]],
+        colWidths=[160,20, 300]
+    )
+
+    table.setStyle(TableStyle([
+        ('BOX', (0,0), (-1,-1), 1.5, colors.black),
+
+    # FULL green left column
+        ('BACKGROUND', (0,0), (0,0), colors.HexColor("#12b76a")),
+
+    # alignment
+        ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
+
+    # spacing
+        ('LEFTPADDING', (0,0), (-1,-1), 20),
+        ('RIGHTPADDING', (0,0), (-1,-1), 20),
+        ('TOPPADDING', (0,0), (-1,-1), 20),
+        ('BOTTOMPADDING', (0,0), (-1,-1), 20),
+    ]))
+
+    elements.append(table)
+
+    doc.build(elements)
+
+    return response
+def send_booking_email(user, booking):
+    subject = "🎟️ Turf Booking Confirmed"
+
+    message = f"""
+Hi {user.username},
+
+Your booking is confirmed!
+
+Turf: {booking.turf.turf_name}
+Date: {booking.date}
+Time: {booking.start_time} - {booking.end_time}
+Booking ID: {booking.booking_id}
+
+Thank you for using TurfHub!
+"""
+
+    send_mail(
+        subject,
+        message,
+        settings.EMAIL_HOST_USER,
+        [user.email],
+        fail_silently=False,
+    )
     

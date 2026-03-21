@@ -12,5 +12,6 @@ urlpatterns = [
     path('booking-success/', views.booking_success, name='booking_success'),
     path('verify_payment/', views.verify_payment, name='verify_payment'),
     path('generate_qr/<int:booking_id>/', views.generate_qr, name='generate_qr'),
+    path('download_ticket/<int:booking_id>/', views.download_ticket, name='download_ticket'),
 
 ]

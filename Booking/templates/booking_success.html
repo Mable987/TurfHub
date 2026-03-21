@@ -92,62 +92,73 @@
     <main>
         <main>
 
-<section class="blog_area section-padding">
-    <div class="container">
+            <section class="blog_area section-padding">
+                <div class="container">
 
-```
-    <!-- Success Message -->
-    <div class="text-center mb-5">
-        <h2 class="text-success">🎉 Booking Confirmed!</h2>
-        <p>Your payment was successful</p>
-    </div>
+                    ```
+                    <!-- Success Message -->
+                    <div class="text-center mb-5">
+                        <h2 class="text-success">🎉 Booking Confirmed!</h2>
+                        <p>Your payment was successful</p>
+                    </div>
 
-    <!-- Booking Tickets -->
-    <div class="row">
+                    <!-- Booking Tickets -->
+                    <div class="row">
 
-        {% for booking in bookings %}
-        <div class="col-lg-6">
-            <div class="card p-4 mb-4 shadow">
+                        {% for booking in bookings %}
+                        <div class="col-lg-6">
+                            <div class="ticket-card">
 
-                <h4>{{ booking.turf.turf_name }}</h4>
-                <p class="text-muted">{{ booking.turf.location }}</p>
+                                <!-- LEFT: QR -->
+                                <div class="ticket-left">
+                                    <img src="{% url 'booking:generate_qr' booking.id %}">
+                                    <p>Scan at entry</p>
+                                </div>
 
-                <hr>
+                                <!-- RIGHT: DETAILS -->
+                                <div class="ticket-right">
 
-                <p>🏟 {{ booking.sport.name }}</p>
-                <p>📅 {{ booking.date }}</p>
-                <p>⏰ {{ booking.start_time }} - {{ booking.end_time }}</p>
-                <p>💰 ₹{{ booking.total_price }}</p>
+                                    <h4>{{ booking.turf.turf_name }}</h4>
+                                    <p class="text-muted">{{ booking.turf.location }}</p>
 
-                <hr>
+                                    <p>🏟 {{ booking.sport.name }}</p>
+                                    <p>📅 {{ booking.date }}</p>
+                                    <p>⏰ {{ booking.start_time }} - {{ booking.end_time }}</p>
+                                    <p>💰 ₹{{ booking.total_price }}</p>
 
-                <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
+                                    <p><strong>Booking ID:</strong> {{ booking.booking_id }}</p>
 
-                {% if booking.payment_status == 'paid' %}
-                    <span class="text-success">✅ Payment Successful</span>
-                {% endif %}
+                                    {% if booking.payment_status == 'paid' %}
+                                    <span class="badge-success">✅ Payment Successful</span>
 
-                <div class="text-center mt-3">
-                    <img src="{% url 'booking:generate_qr' booking.id %}" width="120">
-                    <p class="mt-2">Scan at entry</p>
+                                    <br><br>
+
+                                    <a href="{% url 'booking:download_ticket' booking.id %}"
+                                        class="btn btn-sm btn-dark">
+                                        Download Ticket
+                                    </a>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="col-12 text-center">
+                            <p>No bookings found.</p>
+                        </div>
+                        {% endfor %}
+
+
+
+                    </div>
+
                 </div>
+                ```
 
-            </div>
-        </div>
-        {% empty %}
-        <div class="col-12 text-center">
-            <p>No bookings found.</p>
-        </div>
-        {% endfor %}
+            </section>
 
-    </div>
-
-</div>
-```
-
-</section>
-
-</main>
+        </main>
 
     </main>
     <footer>
@@ -218,5 +229,46 @@
     <!-- Jquery Plugins, main Jquery -->
     <script src="{% static 'assets/js/plugins.js' %}"></script>
     <script src="{% static 'assets/js/main.js' %}"></script>
+    <style>
+        .ticket-card {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* LEFT */
+        .ticket-left {
+            width: 35%;
+            background: #12b76a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            border-right: 2px dashed white;
+        }
+
+        .ticket-left img {
+            width: 100px;
+            background: white;
+            padding: 8px;
+            border-radius: 8px;
+        }
+
+        /* RIGHT */
+        .ticket-right {
+            width: 65%;
+            padding: 20px;
+        }
+
+        .badge-success {
+            display: inline-block;
+            padding: 5px 10px;
+            background: #12b76a;
+            color: white;
+            border-radius: 5px;
+        }
+    </style>
 </body>
+
 </html>
