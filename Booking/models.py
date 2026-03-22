@@ -67,6 +67,7 @@ class Booking(models.Model):
     razorpay_payment_id = models.CharField(max_length=100, null=True, blank=True)
     razorpay_signature = models.CharField(max_length=255, null=True, blank=True)
     booking_id = models.CharField(max_length=20,unique=True, blank=True)
+    is_used = models.BooleanField(default=False)
 
     date = models.DateField()
     start_time = models.TimeField()

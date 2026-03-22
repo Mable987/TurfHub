@@ -131,7 +131,9 @@
                                     {% if booking.payment_status == 'paid' %}
                                     <span class="badge-success">✅ Payment Successful</span>
                                     {% endif %}
-
+                                     <a href="{% url 'booking:download_ticket' booking.id %}" class="btn btn-sm btn-dark mt-2">
+                            Download Ticket
+                        </a>
                                 </div>
 
                             </div>
@@ -143,9 +145,7 @@
                         </div>
                         {% endfor %}
 
-                        <a href="{% url 'booking:download_ticket' booking.id %}" class="btn btn-sm btn-dark mt-2">
-                            Download Ticket
-                        </a>
+                       
 
                     </div>
 

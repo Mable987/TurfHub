@@ -84,7 +84,7 @@
                     </a>
                     <div class="navbar-search-block">
                         <form class="form-inline">
-                           
+
                             <div class="input-group input-group-sm">
                                 <input class="form-control form-control-navbar" type="search" placeholder="Search"
                                     aria-label="Search">
@@ -325,6 +325,12 @@
                                 <p>Bookings</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="{% url 'booking:scan_qr' %}" class="nav-link">
+                                <i class="nav-icon fas fa-qrcode"></i>
+                                <p>Scan Ticket</p>
+                            </a>
+                        </li>
 
                         <li class="nav-item">
                             <a href="#" class="nav-link">
@@ -472,6 +478,7 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
     </script>
+    
 
 </body>
 

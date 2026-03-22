@@ -13,6 +13,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, Tabl
 from reportlab.lib.styles import getSampleStyleSheet
 from django.core.mail import send_mail
 from reportlab.lib import colors
+from django.utils import timezone
 
 
 
@@ -199,7 +200,10 @@ def generate_qr(request, booking_id):
     booking = Booking.objects.get(id=booking_id)
 
     qr_data = {
-        "booking_id": booking.booking_id
+        "booking_id": booking.booking_id,
+        "user": booking.user.username,
+        "date": str(booking.date),
+        "start_time": str(booking.start_time)
     }
 
     img = qrcode.make(json.dumps(qr_data))
@@ -223,7 +227,10 @@ def download_ticket(request, booking_id):
 
     # 🔳 Generate QR
     qr_data = {
-        "booking_id": booking.booking_id
+        "booking_id": booking.booking_id,
+        "user": booking.user.username,
+        "date": str(booking.date),
+        "start_time": str(booking.start_time)
     }
 
     qr = qrcode.make(json.dumps(qr_data))
@@ -305,4 +312,44 @@ Thank you for using TurfHub!
         [user.email],
         fail_silently=False,
     )
-    
+@csrf_exempt
+def validate_qr(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+
+        booking_id = data.get("booking_id")
+
+        try:
+            booking = Booking.objects.get(booking_id=booking_id)
+
+            # ❌ payment check
+            if booking.payment_status != "paid":
+                return JsonResponse({"status": "invalid", "message": "Payment not completed"})
+
+            # ❌ already used
+            if booking.is_used:
+                return JsonResponse({"status": "used", "message": "Ticket already used"})
+
+            # ❌ time expired
+            now = timezone.now()
+            booking_datetime = datetime.combine(booking.date, booking.end_time)
+
+            if now > booking_datetime:
+                return JsonResponse({"status": "expired", "message": "Booking expired"})
+
+            # ✅ mark as used
+            booking.is_used = True
+            booking.save()
+
+            return JsonResponse({
+                "status": "valid",
+                "message": "Entry allowed",
+                "user": booking.user.username,
+                "turf": booking.turf.turf_name,
+                "time": f"{booking.start_time} - {booking.end_time}"
+            })
+
+        except Booking.DoesNotExist:
+            return JsonResponse({"status": "invalid", "message": "Invalid QR"}) 
+def scan_qr_page(request):
+    return render(request, "scan_qr.html")           

@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scan QR</title>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+    <style>
+        #reader {
+            width: 300px;
+            margin: auto;
+        }
+
+        #result {
+            text-align: center;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+<h2 style="text-align:center;">📱 Scan Ticket</h2>
+
+<div id="reader"></div>
+<div id="result"></div>
+
+<script>
+function onScanSuccess(decodedText) {
+
+    let data;
+
+    try {
+        data = JSON.parse(decodedText);
+    } catch (e) {
+        document.getElementById("result").innerHTML =
+            `<div style="color:red;">❌ Invalid QR</div>`;
+        return;
+    }
+
+    let booking_id = data.booking_id;
+
+    fetch(`/booking/validate_ticket/${booking_id}/`)
+    .then(res => res.json())
+    .then(data => {
+        let resultDiv = document.getElementById("result");
+
+        if (data.status === "success") {
+            resultDiv.innerHTML = `<div style="color:green;">
+                ✅ ${data.message}<br>
+                👤 ${data.user}<br>
+                🏟 ${data.turf}
+            </div>`;
+        } else {
+            resultDiv.innerHTML = `<div style="color:red;">
+                ❌ ${data.message}
+            </div>`;
+        }
+    });
+}
+
+// ⭐ THIS WAS MISSING
+let html5QrcodeScanner = new Html5QrcodeScanner(
+    "reader",
+    { fps: 10, qrbox: 250 }
+);
+
+html5QrcodeScanner.render(onScanSuccess);
+</script>
+
+</body>
+</html>
