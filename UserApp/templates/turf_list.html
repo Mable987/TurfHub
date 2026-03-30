@@ -55,8 +55,8 @@
                         <div class="main-menu f-right d-none d-lg-block">
                             <nav>
                                 <ul id="navigation">
-                                    <li><a href="{% url 'home' %}">Home</a></li>
-                                    <li><a href="{% url 'turf_list' %}">Turfs</a></li>
+                                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
                                     <li><a href="#">Pages</a>
                                         <ul class="submenu">
                                             <li><a href="directory_details.html">listing Details</a></li>
@@ -101,7 +101,7 @@
                                 <h1>Explore what you are finding</h1>
                             </div>
                             <!--Hero form -->
-                     <form action="{% url 'turf_list' %}" method="GET" class="search-box mb-100">
+                     <form action="{% url 'user:turf_list' %}" method="GET" class="search-box mb-100">
 
 <div class="input-form">
 <input type="text" name="city" placeholder="Enter City"
@@ -173,7 +173,7 @@ value="{{ state|default:'' }}">
                                             <div class="properties__img overlay1">
 
                                                 {% if turf.turf_image %}
-                                                <a href="{% url 'turf_details' turf.id %}">
+                                                <a href="{% url 'user:turf_details' turf.id %}">
                                                     <img src="{{ turf.turf_image.url }}" alt="">
                                                 </a>
                                                 {% endif %}
@@ -199,7 +199,7 @@ value="{{ state|default:'' }}">
                                             <div class="properties__caption">
 
                                                 <h3>
-                                                    <a href="{% url 'turf_details' turf.id %}">
+                                                    <a href="{% url 'user:turf_details' turf.id %}">
                                                         {{ turf.turf_name }}
                                                     </a>
                                                 </h3>

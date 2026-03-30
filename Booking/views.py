@@ -30,7 +30,6 @@ def book_turf(request, turf_id):
         sport_id = request.POST.get("sport")
         duration = int(request.POST.get("duration", 1))
 
-        # prevent empty time submission
         if not start_time_str:
             messages.error(request, "Please select a start time.")
             return redirect("booking:book_turf", turf_id=turf.id)
@@ -220,12 +219,8 @@ def download_ticket(request, booking_id):
     styles = getSampleStyleSheet()
 
     elements = []
-
-    # 🎟️ Title
     elements.append(Paragraph("🎟️ TurfHub Ticket", styles['Title']))
     elements.append(Spacer(1, 20))
-
-    # 🔳 Generate QR
     qr_data = {
         "booking_id": booking.booking_id,
         "user": booking.user.username,
@@ -248,7 +243,6 @@ def download_ticket(request, booking_id):
         ('ALIGN', (0,0), (-1,-1), 'CENTER'),
     ]))
 
-    # 📄 Right side details
     details = [
         Paragraph(f"<b>Name:</b> {booking.user.username}", styles['Normal']),
         Paragraph(f"<b>{booking.turf.turf_name}</b>", styles['Heading3']),
@@ -261,8 +255,6 @@ def download_ticket(request, booking_id):
         Spacer(1, 5),
         Paragraph(f"<b>Booking ID:</b> {booking.booking_id}", styles['Normal']),
     ]
-
-    # 🧱 Table layout (QR left, details right)
     table = Table(
         [[qr_inner,"", details]],
         colWidths=[160,20, 300]
@@ -270,14 +262,8 @@ def download_ticket(request, booking_id):
 
     table.setStyle(TableStyle([
         ('BOX', (0,0), (-1,-1), 1.5, colors.black),
-
-    # FULL green left column
         ('BACKGROUND', (0,0), (0,0), colors.HexColor("#12b76a")),
-
-    # alignment
         ('VALIGN', (0,0), (-1,-1), 'MIDDLE'),
-
-    # spacing
         ('LEFTPADDING', (0,0), (-1,-1), 20),
         ('RIGHTPADDING', (0,0), (-1,-1), 20),
         ('TOPPADDING', (0,0), (-1,-1), 20),
@@ -337,7 +323,6 @@ def validate_qr(request):
             if now > booking_datetime:
                 return JsonResponse({"status": "expired", "message": "Booking expired"})
 
-            # ✅ mark as used
             booking.is_used = True
             booking.save()
 

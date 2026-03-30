@@ -31,7 +31,7 @@ def admin_dashboard(request):
 @superuser_required
 def add_turf(request):
 
-    sports = Sport.objects.all()   # get all sports
+    sports = Sport.objects.all()   
 
     if request.method == "POST":
 

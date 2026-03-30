@@ -143,7 +143,7 @@
                         </div>
 
                         <p class="mb-2">
-                             {{ turf.location }}
+                            {{ turf.location }}
                         </p>
 
                         <p class="mb-3">
@@ -181,27 +181,83 @@
                             <img src="{{ turf.turf_image.url }}" class="img-fluid mb-30">
 
                             {% endif %}
-                             <div class="small-tittle mb-20">
-                        <h2>Reviews</h2>
-                    </div>
+                            <div class="small-tittle mb-20">
+                                <h2>Reviews</h2>
+                            </div>
+                            <div class="mb-3">
 
-                    {% for review in reviews %}
+                                <!-- Stars -->
+                                <span style="font-size: 22px; color: gold;">
+                                    {% for i in "12345" %}
+                                    {% if forloop.counter <= avg_rating %} ★ {% else %} ☆ {% endif %} {% endfor %}
+                                        </span>
 
-                    <div class="review-box mb-3">
+                                        <!-- Rating + count -->
+                                        <span style="font-size: 16px;">
+                                            {{ avg_rating|floatformat:1 }} ({{ total_reviews }} reviews)
+                                        </span>
 
-                        <strong>{{ review.user.username }}</strong>
+                            </div>
 
-                        <p>Rating: ⭐ {{ review.rating }}/5</p>
+                            {% for review in reviews %}
 
-                        <p>{{ review.comment }}</p>
+                            <div class="review-box mb-3">
 
-                    </div>
+                                <strong>{{ review.user.username }}</strong>
 
-                    {% empty %}
+                                <p>
+                                    {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %} ★ {% else %} ☆ {% endif %} {% endfor %}
+                                        </p>
 
-                    <p>No reviews yet.</p>
+                                        <p>{{ review.comment }}</p>
 
-                    {% endfor %}
+                            </div>
+
+                            {% empty %}
+
+                            <p>No reviews yet.</p>
+
+                            {% endfor %}
+                            <hr>
+
+                            <h4 class="mt-4">Write a Review</h4>
+                            {% if not user_reviewed %}
+
+                            <form method="POST" action="{% url 'user:add_review' turf.id %}">
+                                {% csrf_token %}
+
+                                <div class="form-group">
+                                    <label>Rating (1-5)</label>
+                                    <div class="form-group">
+                                        <label>Rating</label>
+
+                                        <div id="star-rating" style="font-size: 28px; cursor: pointer;">
+                                            <span data-value="1">☆</span>
+                                            <span data-value="2">☆</span>
+                                            <span data-value="3">☆</span>
+                                            <span data-value="4">☆</span>
+                                            <span data-value="5">☆</span>
+                                        </div>
+
+                                        <input type="hidden" name="rating" id="rating-value" required>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Comment</label>
+                                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary mt-2">
+                                    Submit Review
+                                </button>
+                            </form>
+                            
+                            <!-- show form -->
+                            {% else %}
+                            <p class="text-success">You already reviewed this turf ✅</p>
+                            {% endif %}
 
                         </div>
 
@@ -224,7 +280,7 @@
 
                         </div>
                     </div>
-                   
+
                 </div>
             </div>
         </div>
@@ -400,6 +456,54 @@
     <!-- Jquery Plugins, main Jquery -->
     <script src="{% static 'assets/js/plugins.js' %}"></script>
     <script src="{% static 'assets/js/main.js' %}"></script>
+    <script>
+    const stars = document.querySelectorAll("#star-rating span");
+    const ratingInput = document.getElementById("rating-value");
+
+    // ⭐ CLICK EVENT (THIS WAS MISSING)
+    stars.forEach((star) => {
+        star.addEventListener("click", function () {
+            const value = this.getAttribute("data-value");
+            ratingInput.value = value;
+
+            stars.forEach((s, index) => {
+                if (index < value) {
+                    s.textContent = "★";
+                    s.style.color = "gold";
+                } else {
+                    s.textContent = "☆";
+                    s.style.color = "black";
+                }
+            });
+        });
+
+        // ⭐ HOVER EFFECT
+        star.addEventListener("mouseover", function () {
+            const value = this.getAttribute("data-value");
+
+            stars.forEach((s, index) => {
+                if (index < value) {
+                    s.textContent = "★";
+                } else {
+                    s.textContent = "☆";
+                }
+            });
+        });
+
+        // ⭐ RESET AFTER HOVER
+        star.addEventListener("mouseout", function () {
+            const selected = ratingInput.value;
+
+            stars.forEach((s, index) => {
+                if (index < selected) {
+                    s.textContent = "★";
+                } else {
+                    s.textContent = "☆";
+                }
+            });
+        });
+    });
+</script>
 
 
 </body>

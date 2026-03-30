@@ -7,7 +7,7 @@
 
     <style>
         #reader {
-            width: 300px;
+            width: 500px;
             margin: auto;
         }
 
@@ -41,17 +41,18 @@ function onScanSuccess(decodedText) {
 
     let booking_id = data.booking_id;
 
-    fetch(`/booking/validate_ticket/${booking_id}/`)
+    fetch(`/booking/validate_qr/${booking_id}/`)
     .then(res => res.json())
     .then(data => {
         let resultDiv = document.getElementById("result");
+        
 
         if (data.status === "success") {
             resultDiv.innerHTML = `<div style="color:green;">
                 ✅ ${data.message}<br>
                 👤 ${data.user}<br>
                 🏟 ${data.turf}
-            </div>`;
+            </div>`
         } else {
             resultDiv.innerHTML = `<div style="color:red;">
                 ❌ ${data.message}
@@ -60,7 +61,7 @@ function onScanSuccess(decodedText) {
     });
 }
 
-// ⭐ THIS WAS MISSING
+
 let html5QrcodeScanner = new Html5QrcodeScanner(
     "reader",
     { fps: 10, qrbox: 250 }

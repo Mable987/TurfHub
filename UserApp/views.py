@@ -5,6 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Avg
 
 # Create your views here.
 @login_required(login_url='user:user_login')
@@ -12,12 +13,10 @@ def home(request):
 
     turfs = Turf.objects.filter(is_active=True)[:6]
     sports = Sport.objects.all()
-
     context = {
         'turfs': turfs,
         'sports': sports
     }
-
     return render(request, "home.html", context)
 
 def turf_list(request):
@@ -44,7 +43,6 @@ def turf_list(request):
         'city': city,
         'state': state
     }
-
     return render(request, 'turf_list.html', context)
 def turf_details(request, turf_id):
 
@@ -59,27 +57,54 @@ def turf_details(request, turf_id):
     }
 
     return render(request, 'turf_details.html', context)
+
+@login_required
 def add_review(request, turf_id):
+    turf = get_object_or_404(Turf, id=turf_id)
 
-    if request.method == "POST":
+    if request.method != "POST":
+        return redirect('user:turf_details', turf_id=turf_id)
 
-        rating = request.POST.get("rating")
-        comment = request.POST.get("comment")
-        turf = Turf.objects.get(id=turf_id)
+    if Review.objects.filter(user=request.user, turf=turf).exists():
+        messages.error(request, "You already reviewed this turf.")
+        return redirect('user:turf_details', turf_id=turf_id)
 
-        Review.objects.create(
-            user=request.user,
-            turf=turf,
-            rating=rating,
-            comment=comment
-        )
+    if not Booking.objects.filter(
+        user=request.user,
+        turf=turf,
+        payment_status='paid'
+    ).exists():
+        messages.error(request, "You can only review after booking.")
+        return redirect('user:turf_details', turf_id=turf_id)
 
+    rating = request.POST.get("rating")
+    comment = request.POST.get("comment")
+
+    if not rating or not comment:
+        messages.error(request, "All fields are required.")
+        return redirect('user:turf_details', turf_id=turf_id)
+
+    Review.objects.create(
+        user=request.user,
+        turf=turf,
+        rating=int(rating),
+        comment=comment,
+    )
+    reviews = turf.reviews.all()
+    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+    total_reviews = reviews.count()
+    return render(request, "turf_details.html", {
+        "turf": turf,
+        "reviews": reviews,
+        "avg_rating": avg_rating,
+        "total_reviews": total_reviews
+    })    
+    messages.success(request, "Review added successfully!")
     return redirect('user:turf_details', turf_id=turf_id)
 
 def user_signup(request):
 
     if request.method == "POST":
-
         username = request.POST.get("username")
         email = request.POST.get("email")
         password = request.POST.get("password")
@@ -111,7 +136,6 @@ def user_signup(request):
 def user_login(request):
 
     if request.method == "POST":
-
         email = request.POST.get("email")
         password = request.POST.get("password")
 
@@ -138,12 +162,10 @@ def profile(request):
 def my_bookings(request):
 
     now = timezone.now()
-
     bookings = Booking.objects.filter(
         user=request.user,
         payment_status='paid'
     )
-
     active_bookings = []
 
     for booking in bookings:
