@@ -35,6 +35,24 @@
         .user-dropdown .dropdown-item {
             padding: 12px 20px;
         }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .search-box .input-form {
+            flex: 1;
+        }
+
+        .search-box .select-form {
+            flex: 1;
+        }
+
+        .search-box .search-form {
+            flex: 0 0 auto;
+        }
     </style>
 </head>
 
@@ -66,21 +84,8 @@
                             <nav>
                                 <ul id="navigation">
                                     <li><a href="{% url 'user:home' %}">Home</a></li>
-                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
-                                    <li><a href="#">Pages</a>
-                                        <ul class="submenu">
-                                            <li><a href="directory_details.html">listing Details</a></li>
-                                            <li><a href="listing.html">Catagories</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="blog.html">Blog</a>
-                                        <ul class="submenu">
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="blog_details.html">Blog Details</a></li>
-                                            <li><a href="elements.html">Elements</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>                             
+                                    <li><a href="{% url 'user:contact' %}">Contact</a></li>
                                 </ul>
                             </nav>
                         </div>
@@ -146,24 +151,36 @@
                                 <p>Find and book football, cricket, and badminton turfs near you.</p>
                             </div>
                             <!--Hero form -->
-                            <form action="#" class="search-box mb-100">
+                            <form action="{% url 'user:turf_list' %}" method="GET" class="search-box mb-100">
+
                                 <div class="input-form">
-                                    <input type="text" placeholder="What are you finding?">
+                                    <input type="text" name="city" placeholder="Enter City"
+                                        value="{{ city|default:'' }}">
                                 </div>
+
                                 <div class="select-form">
                                     <div class="select-itms">
-                                        <select name="select" id="select1">
-                                            <option value="">In where?</option>
-                                            <option value="">Catagories One</option>
-                                            <option value="">Catagories Two</option>
-                                            <option value="">Catagories Three</option>
-                                            <option value="">Catagories Four</option>
+                                        <select name="sport">
+
+                                            <option value="">Choose Sport</option>
+
+                                            {% for sport in sports %}
+                                            <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ sport.name }}
+                                            </option>
+                                            {% endfor %}
+
                                         </select>
                                     </div>
                                 </div>
+
                                 <div class="search-form">
-                                    <a href="#"><i class="ti-search"></i> Search</a>
+                                    <button type="submit" class="btn">
+                                        <i class="ti-search"></i> Search
+                                    </button>
+                                
                                 </div>
+
                             </form>
                             <!-- hero category1 img -->
                             <div class="category-img text-center">
@@ -198,61 +215,23 @@
                     </div>
                 </div>
                 <div class="row">
+                    {% for c in cities %}
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="single-location mb-30">
                             <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/location1.png' %}" alt="">
+                                <img src="{% static 'assets/img/gallery/' %}{% cycle 'kochi_1.jpeg' 'tvm_1.jpeg' 'kollam_2.jpg' %}">
                             </div>
                             <div class="location-details">
-                                <p>New York</p>
-                                <a href="#" class="location-btn">65 <i class="ti-plus"></i> Listing</a>
+                                <p>{{c.city}}</p>
+                                <a href="{% url 'user:turf_list' %}?city={{ c.city }}"
+                                    class="location-btn">
+                                    {{ c.count }} Turfs <i class="ti-plus"></i>
+                                </a>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6 col-md-6 col-sm-6">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/location2.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <p>Paris</p>
-                                <a href="#" class="location-btn">60 <i class="ti-plus"></i> Listing</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/location3.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <p>Rome</p>
-                                <a href="#" class="location-btn">50 <i class="ti-plus"></i> Listing</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/location4.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <p>Italy</p>
-                                <a href="#" class="location-btn">28 <i class="ti-plus"></i> Location</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/location5.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <p>Nepal</p>
-                                <a href="#" class="location-btn">99 <i class="ti-plus"></i> Listing</a>
-                            </div>
-                        </div>
-                    </div>
+                    {% endfor %}
+                    
                 </div>
             </div>
         </div>
@@ -264,7 +243,7 @@
                     <div class="col-lg-12">
                         <!-- Section Tittle -->
                         <div class="section-tittle text-center mb-80">
-                            <h2>Popular Directory</h2>
+                            <h2>Popular Turfs</h2>
                             <p>Let's uncover the best places to eat, drink, and shop nearest to you.</p>
                         </div>
                     </div>
@@ -309,295 +288,69 @@
         <!--? Popular Directory End -->
         <!--? Want To work 01-->
         <section class="wantToWork-area">
-            <div class="container">
-                <div class="wants-wrapper w-padding2">
-                    <div class="row align-items-center justify-content-between">
-                        <div class="col-xl-7 col-lg-9 col-md-8">
-                            <div class="wantToWork-caption wantToWork-caption2">
-                                <h2>How it works</h2>
-                                <p>Let's uncover the best places to eat, drink, and shop nearest to you.</p>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4">
-                            <a href="#" class="btn f-right sm-left">Explore Listing</a>
-                        </div>
+    <div class="container">
+        <div class="wants-wrapper w-padding2">
+            <div class="row align-items-center justify-content-between">
+                <div class="col-xl-7 col-lg-9 col-md-8">
+                    <div class="wantToWork-caption wantToWork-caption2">
+                        <h2>How TurfBooking Works</h2>
+                        <p>Book your favorite turf in just a few simple steps.</p>
                     </div>
                 </div>
-            </div>
-        </section>
-        <!-- Want To work End -->
-        <!--? Our Services Start -->
-        <div class="our-services  border-bottom">
-            <div class="container">
-                <div class="row">
-                    <div class=" col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-services mb-30">
-                            <div class="services-ion">
-                                <span>01</span>
-                            </div>
-                            <div class="services-cap">
-                                <h5><a href="#">Find Businesses</a></h5>
-                                <p>Discover & connect with great local businesses in your local neighborhood like
-                                    dentists, hair stylists and more.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-services mb-30">
-                            <div class="services-ion">
-                                <span>02</span>
-                            </div>
-                            <div class="services-cap">
-                                <h5><a href="#">Review Listings</a></h5>
-                                <p>Discover & connect with great local businesses in your local neighborhood like
-                                    dentists, hair stylists and more.</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=" col-lg-4 col-md-6 col-sm-6">
-                        <div class="single-services mb-30">
-                            <div class="services-ion">
-                                <span>03</span>
-                            </div>
-                            <div class="services-cap">
-                                <h5><a href="#">Make a Reservation</a></h5>
-                                <p>Discover & connect with great local businesses in your local neighborhood like
-                                    dentists, hair stylists and more.</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="col-xl-2 col-lg-3 col-md-4">
+                    <a href="{% url 'user:turf_list' %}" class="btn f-right sm-left">
+                        Explore Turfs
+                    </a>
                 </div>
             </div>
         </div>
-        <!-- Our Services End -->
-        <!--? Popular Directory Start -->
-        <div class="popular-directorya-area section-padding40 border-bottom fix">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <!-- Section Tittle -->
-                        <div class="section-tittle text-center mb-80">
-                            <h2>New Directory</h2>
-                            <p>Let's uncover the best places to eat, drink, and shop nearest to you.</p>
-                        </div>
+    </div>
+</section>
+<div class="our-services border-bottom">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="single-services mb-30 text-center">
+                    <div class="services-ion">
+                        <span>01</span>
                     </div>
-                </div>
-                <div class="directory-active">
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/newDirectory1.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/newDirectory2.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/newDirectory3.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Single -->
-                    <div class="properties pb-20">
-                        <div class="properties__card">
-                            <div class="properties__img overlay1">
-                                <a href="#"><img src="{% static 'assets/img/gallery/properties1.png' %}" alt=""></a>
-                                <div class="img-text">
-                                    <span>$$$</span>
-                                    <span>Closed</span>
-                                </div>
-                                <div class="icon">
-                                    <img src="{% static 'assets/img/gallery/categori_icon1.png' %}" alt="">
-                                </div>
-                            </div>
-                            <div class="properties__caption">
-                                <h3><a href="#">Urban areas</a></h3>
-                                <p>Let's uncover the best places to eat, drink</p>
-                            </div>
-                            <div class="properties__footer d-flex justify-content-between align-items-center">
-                                <div class="restaurant-name">
-                                    <img src="{% static 'assets/img/gallery/restaurant-icon.png' %}" alt="">
-                                    <h3>Food & Restaurant</h3>
-                                </div>
-                                <div class="heart">
-                                    <img src="{% static 'assets/img/gallery/heart1.png' %}" alt="">
-                                </div>
-                            </div>
-                        </div>
+                    <div class="services-cap">
+                        <h5>Search Turfs</h5>
+                        <p>Find football, cricket, and badminton turfs in your city.</p>
                     </div>
                 </div>
             </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="single-services mb-30 text-center">
+                    <div class="services-ion">
+                        <span>02</span>
+                    </div>
+                    <div class="services-cap">
+                        <h5>Select Time Slot</h5>
+                        <p>Choose your preferred date and time for playing.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-6 col-sm-6">
+                <div class="single-services mb-30 text-center">
+                    <div class="services-ion">
+                        <span>03</span>
+                    </div>
+                    <div class="services-cap">
+                        <h5>Book Instantly</h5>
+                        <p>Confirm your booking and get ready to play!</p>
+                    </div>
+                </div>
+            </div>
+
         </div>
-        <!-- Popular Directory End -->
-        <!--? Popular Locations Start 01-->
-        <div class="popular-location border-bottom section-padding40">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <!-- Section Tittle -->
-                        <div class="section-tittle text-center mb-80">
-                            <h2>News & Updates</h2>
-                            <p>Let's uncover the best places to eat, drink, and shop nearest to you.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/home-blog1.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <a href="#" class="location-btn">Tips</a>
-                                <ul>
-                                    <li>12 March I by Alan</li>
-                                </ul>
-                                <p><a href="blog_details.html">The Best SPA Salons For Your Relaxation</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/home-blog2.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <a href="#" class="location-btn">Tips</a>
-                                <ul>
-                                    <li>12 March I by Alan</li>
-                                </ul>
-                                <p><a href="blog_details.html">The Best SPA Salons For Your Relaxation</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Popular Locations End -->
-        <!--? Want To work 02-->
-        <section class="wantToWork-area">
-            <div class="container">
-                <div class="wants-wrapper w-padding2">
-                    <div class="row justify-content-between">
-                        <div class="col-xl-8 col-lg-8 col-md-7">
-                            <div class="wantToWork-caption wantToWork-caption2">
-                                <img src="{% static 'assets/img/logo/logo2_footer.png' %}" alt="" class="mb-20">
-                                <p>Users and submit their own items. You can create different packages and by connecting
-                                    with your
-                                    PayPal or Stripe account charge users for registration to your directory portal.</p>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-5">
-                            <div class="footer-social f-right sm-left">
-                                <a href="#"><i class="fab fa-twitter"></i></a>
-                                <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                <a href="#"><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+    </div>
+</div>
         <!-- Want To work End -->
-        <!--? Want To work 01-->
-        <section class="wantToWork-area">
-            <div class="container">
-                <div class="wants-wrapper">
-                    <div class="row align-items-center justify-content-between">
-                        <div class="col-xl-7 col-lg-9 col-md-8">
-                            <div class="wantToWork-caption wantToWork-caption2">
-                                <div class="main-menu2">
-                                    <nav>
-                                        <ul>
-                                            <li><a href="index.html">Home</a></li>
-                                            <li><a href="explore.html">Explore</a></li>
-                                            <li><a href="pages.html">Pages</a></li>
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="contact.html">Contact</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4">
-                            <a href="#" class="btn f-right sm-left">Add Listing</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Want To work End -->
+        
     </main>
     <footer>
         <div class="footer-wrapper pt-30">

@@ -36,7 +36,7 @@ def owner_dashboard(request):
     }
 
     return render(request, 'owner/dashboard.html', context)  
-@login_required(login_url='owner:owner_login')
+
 def owner_login(request):
 
     if request.method == "POST":

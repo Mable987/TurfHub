@@ -1,24 +1,33 @@
 from django.shortcuts import redirect, render
 from Booking.models import *
+from UserApp.models import Contact
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.db.models import Avg
+from django.db.models import Avg, Count
 
 # Create your views here.
-@login_required(login_url='user:user_login')
-def home(request):
 
+def home(request):
     turfs = Turf.objects.filter(is_active=True)[:6]
     sports = Sport.objects.all()
+
+    cities = (
+        Turf.objects.filter(is_active=True)
+        .values('city')
+        .annotate(count=Count('id'))
+        .order_by('-count')[:6]
+    )
+
     context = {
         'turfs': turfs,
-        'sports': sports
+        'sports': sports,
+        'cities': cities
     }
-    return render(request, "home.html", context)
 
+    return render(request, "home.html", context)
 def turf_list(request):
 
     sports = Sport.objects.all()
@@ -47,13 +56,22 @@ def turf_list(request):
 def turf_details(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id)
+
     reviews = Review.objects.filter(turf=turf).order_by('-created_at')
-    sports = turf.sports.all()
+
+    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+    total_reviews = reviews.count()
+
+    user_reviewed = False
+    if request.user.is_authenticated:
+        user_reviewed = reviews.filter(user=request.user).exists()
 
     context = {
         'turf': turf,
         'reviews': reviews,
-        'sports': sports
+        'avg_rating': avg_rating,
+        'total_reviews': total_reviews,
+        'user_reviewed': user_reviewed
     }
 
     return render(request, 'turf_details.html', context)
@@ -90,15 +108,6 @@ def add_review(request, turf_id):
         rating=int(rating),
         comment=comment,
     )
-    reviews = turf.reviews.all()
-    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg'] or 0
-    total_reviews = reviews.count()
-    return render(request, "turf_details.html", {
-        "turf": turf,
-        "reviews": reviews,
-        "avg_rating": avg_rating,
-        "total_reviews": total_reviews
-    })    
     messages.success(request, "Review added successfully!")
     return redirect('user:turf_details', turf_id=turf_id)
 
@@ -175,6 +184,27 @@ def my_bookings(request):
             active_bookings.append(booking)
 
     return render(request, 'my_bookings.html', {'bookings': active_bookings})
+
+def contact_view(request):
+    if request.method == "POST":
+        name = request.POST.get("name")
+        email = request.POST.get("email")
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+
+        if not name or not email or not subject or not message:
+            messages.error(request, "All fields are required")
+            return redirect("contact")
+        Contact.objects.create(
+            name=name,
+            email=email,
+            subject=subject,
+            message=message
+        )
+        messages.success(request, "Message sent successfully!")
+        return redirect("contact")
+
+    return render(request, "contacts.html")
 
 
 

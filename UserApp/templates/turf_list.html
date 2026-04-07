@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>DirectoryListing</title>
+    <title>TurfBooking</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="manifest" href="{% static 'assets/site.webmanifest' %}">
@@ -26,6 +26,16 @@
     <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <style>
+        .user-dropdown {
+            min-width: 180px;
+            font-size: 16px;
+        }
+
+        .user-dropdown .dropdown-item {
+            padding: 12px 20px;
+        }
+    </style>
 </head>
 
 <body>
@@ -56,29 +66,48 @@
                             <nav>
                                 <ul id="navigation">
                                     <li><a href="{% url 'user:home' %}">Home</a></li>
-                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
-                                    <li><a href="#">Pages</a>
-                                        <ul class="submenu">
-                                            <li><a href="directory_details.html">listing Details</a></li>
-                                            <li><a href="listing.html">Catagories</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="blog.html">Blog</a>
-                                        <ul class="submenu">
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="blog_details.html">Blog Details</a></li>
-                                            <li><a href="elements.html">Elements</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="contact.html">Contact</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>                                    
+                                    <li><a href="{% url 'user:contact' %}">Contact</a></li>
                                 </ul>
                             </nav>
                         </div>
                         <!-- Header-btn -->
-                        <div class="header-btns d-none d-lg-block f-right">
-                            <a href="#" class="mr-40"><i class="ti-user"></i> Log in</a>
-                            <a href="#" class="btn">Add Listing</a>
+                        {% if user.is_authenticated %}
+
+                        <div class="dropdown user-menu">
+
+                            <a class="nav-link dropdown-toggle user-btn" href="#" data-toggle="dropdown">
+                                <span class="user-icon">👤</span>
+                                {{ user.username }}
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right user-dropdown">
+
+                                <a class="dropdown-item" href="{% url 'user:profile' %}">
+                                    👤 Profile
+                                </a>
+
+                                <a class="dropdown-item" href="{% url 'user:my_bookings' %}">
+                                    🏟 My Bookings
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item logout-item" href="{% url 'user:user_logout' %}">
+                                    🚪 Logout
+                                </a>
+
+                            </div>
+
                         </div>
+
+                        {% else %}
+
+                        <a href="{% url 'user:user_login' %}" class="btn btn-primary">Login</a>
+                        <a href="{% url 'user:user_signup' %}" class="btn btn-success">Sign Up</a>
+
+                        {% endif %}
+
                         <!-- Mobile Menu -->
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>
@@ -101,49 +130,46 @@
                                 <h1>Explore what you are finding</h1>
                             </div>
                             <!--Hero form -->
-                     <form action="{% url 'user:turf_list' %}" method="GET" class="search-box mb-100">
+                            <form action="{% url 'user:turf_list' %}" method="GET" class="search-box mb-100">
 
-<div class="input-form">
-<input type="text" name="city" placeholder="Enter City"
-value="{{ city|default:'' }}">
-</div>
+                                <div class="input-form">
+                                    <input type="text" name="city" placeholder="Enter City"
+                                        value="{{ city|default:'' }}">
+                                </div>
 
-<div class="input-form">
-<input type="text" name="state" placeholder="Enter State"
-value="{{ state|default:'' }}">
-</div>
+                                <div class="input-form">
+                                    <input type="text" name="state" placeholder="Enter State"
+                                        value="{{ state|default:'' }}">
+                                </div>
 
-<div class="select-form">
-<div class="select-itms">
-<select name="sport">
+                                <div class="select-form">
+                                    <div class="select-itms">
+                                        <select name="sport">
 
-<option value="">Choose Sport</option>
+                                            <option value="">Choose Sport</option>
 
-{% for sport in sports %}
-<option value="{{ sport.id }}"
-{% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
-{{ sport.name }}
-</option>
-{% endfor %}
+                                            {% for sport in sports %}
+                                            <option value="{{ sport.id }}" {% if selected_sport == sport.id|stringformat:"s" %}selected{% endif %}>
+                                                {{ sport.name }}
+                                            </option>
+                                            {% endfor %}
 
-</select>
-</div>
-</div>
+                                        </select>
+                                    </div>
+                                </div>
 
-<div class="search-form">
-<button type="submit" class="btn">
-<i class="ti-search"></i> Search
-</button>
-</div>
+                                <div class="search-form">
+                                    <button type="submit" class="btn">
+                                        <i class="ti-search"></i> Search
+                                    </button>
+                                </div>
 
-</form>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
-
 
         <!-- listing Area Start -->
         <div class="listing-area pt-120 pb-120">
@@ -166,7 +192,7 @@ value="{{ state|default:'' }}">
                                 {% if turfs %}
                                 {% for turf in turfs %}
 
-                                <div class="col-lg-6">
+                                <div class="col-lg-4 col-md-6">
                                     <div class="properties properties2 mb-30">
                                         <div class="properties__card">
 
@@ -211,16 +237,12 @@ value="{{ state|default:'' }}">
                                         </div>
                                     </div>
                                 </div>
-
                                 {% empty %}
 
                                 <p>No turfs found.</p>
-
                                 {% endfor %}
                                 {% else %}
-
                                 <h4>No turfs found for this location.</h4>
-
                                 {% endif %}
 
                             </div>
@@ -254,109 +276,7 @@ value="{{ state|default:'' }}">
                 </div>
             </div>
         </div>
-        <!-- listing-area Area End -->
-
-
-
-        <!--? Popular Locations Start 01-->
-        <div class="popular-location border-bottom section-padding40">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-12">
-                        <!-- Section Tittle -->
-                        <div class="section-tittle text-center mb-80">
-                            <h2>News & Updates</h2>
-                            <p>Let's uncover the best places to eat, drink, and shop nearest to you.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/home-blog1.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <a href="#" class="location-btn">Tips</a>
-                                <ul>
-                                    <li>12 March I by Alan</li>
-                                </ul>
-                                <p><a href="blog_details.html">The Best SPA Salons For Your Relaxation</a></p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-md-6 col-sm-12">
-                        <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/home-blog2.png' %}" alt="">
-                            </div>
-                            <div class="location-details">
-                                <a href="#" class="location-btn">Tips</a>
-                                <ul>
-                                    <li>12 March I by Alan</li>
-                                </ul>
-                                <p><a href="blog_details.html">The Best SPA Salons For Your Relaxation</a></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Popular Locations End -->
-        <!--? Want To work 02-->
-        <section class="wantToWork-area">
-            <div class="container">
-                <div class="wants-wrapper w-padding2">
-                    <div class="row justify-content-between">
-                        <div class="col-xl-8 col-lg-8 col-md-7">
-                            <div class="wantToWork-caption wantToWork-caption2">
-                                <img src="{% static 'assets/img/logo/logo2_footer.png' %}" alt="" class="mb-20">
-                                <p>Users and submit their own items. You can create different packages and by connecting
-                                    with your
-                                    PayPal or Stripe account charge users for registration to your directory portal.</p>
-                            </div>
-                        </div>
-                        <div class="col-xl-4 col-lg-4 col-md-5">
-                            <div class="footer-social f-right sm-left">
-                                <a href="#"><i class="fab fa-twitter"></i></a>
-                                <a href="https://bit.ly/sai4ull"><i class="fab fa-facebook-f"></i></a>
-                                <a href="#"><i class="fab fa-pinterest-p"></i></a>
-                                <a href="#"><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Want To work End -->
-        <!--? Want To work 01-->
-        <section class="wantToWork-area">
-            <div class="container">
-                <div class="wants-wrapper">
-                    <div class="row align-items-center justify-content-between">
-                        <div class="col-xl-7 col-lg-9 col-md-8">
-                            <div class="wantToWork-caption wantToWork-caption2">
-                                <div class="main-menu2">
-                                    <nav>
-                                        <ul>
-                                            <li><a href="index.html">Home</a></li>
-                                            <li><a href="explore.html">Explore</a></li>
-                                            <li><a href="pages.html">Pages</a></li>
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="contact.html">Contact</a></li>
-                                        </ul>
-                                    </nav>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-xl-2 col-lg-3 col-md-4">
-                            <a href="#" class="btn f-right sm-left">Add Listing</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- Want To work End -->
+        <!-- listing-area Area End -->       
     </main>
     <footer>
         <div class="footer-wrapper pt-30">
@@ -429,25 +349,25 @@ value="{{ state|default:'' }}">
     <!-- Jquery Plugins, main Jquery -->
     <script src="{% static 'assets/js/plugins.js' %}"></script>
     <script src="{% static 'assets/js/main.js' %}"></script>
-<style>
-    .search-box{
-display:flex;
-align-items:center;
-gap:15px;
-}
+    <style>
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-.search-box .input-form{
-flex:1;
-}
+        .search-box .input-form {
+            flex: 1;
+        }
 
-.search-box .select-form{
-flex:1;
-}
+        .search-box .select-form {
+            flex: 1;
+        }
 
-.search-box .search-form{
-flex:0 0 auto;
-}
-</style>
+        .search-box .search-form {
+            flex: 0 0 auto;
+        }
+    </style>
 
 </body>
 

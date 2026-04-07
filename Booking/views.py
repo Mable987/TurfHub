@@ -165,21 +165,18 @@ def verify_payment(request):
         settings.RAZORPAY_KEY_ID,
         settings.RAZORPAY_KEY_SECRET
     ))
-
     params_dict = {
         'razorpay_order_id': data['razorpay_order_id'],
         'razorpay_payment_id': data['razorpay_payment_id'],
         'razorpay_signature': data['razorpay_signature']
     }
 
-    try:
-        
+    try:        
         client.utility.verify_payment_signature(params_dict)        
         bookings = Booking.objects.filter(
             user=request.user,
             payment_status='pending'
         )
-
         for booking in bookings:
              if booking.payment_status != 'paid':
                 booking.payment_status = 'paid'
@@ -188,7 +185,6 @@ def verify_payment(request):
                 booking.razorpay_order_id = data['razorpay_order_id']
                 booking.razorpay_signature = data['razorpay_signature']
                 booking.save()
-
                 send_booking_email(request.user, booking)
 
         return JsonResponse({'status': 'success'})
@@ -214,7 +210,6 @@ def download_ticket(request, booking_id):
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="ticket_{booking.id}.pdf"'
-
     doc = SimpleDocTemplate(response)
     styles = getSampleStyleSheet()
 
@@ -227,7 +222,6 @@ def download_ticket(request, booking_id):
         "date": str(booking.date),
         "start_time": str(booking.start_time)
     }
-
     qr = qrcode.make(json.dumps(qr_data))
 
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
@@ -259,7 +253,6 @@ def download_ticket(request, booking_id):
         [[qr_inner,"", details]],
         colWidths=[160,20, 300]
     )
-
     table.setStyle(TableStyle([
         ('BOX', (0,0), (-1,-1), 1.5, colors.black),
         ('BACKGROUND', (0,0), (0,0), colors.HexColor("#12b76a")),
@@ -306,23 +299,18 @@ def validate_qr(request):
         booking_id = data.get("booking_id")
 
         try:
-            booking = Booking.objects.get(booking_id=booking_id)
-
-            # ❌ payment check
+            booking = Booking.objects.get(booking_id=booking_id)          
             if booking.payment_status != "paid":
                 return JsonResponse({"status": "invalid", "message": "Payment not completed"})
-
-            # ❌ already used
+            
             if booking.is_used:
                 return JsonResponse({"status": "used", "message": "Ticket already used"})
 
-            # ❌ time expired
             now = timezone.now()
             booking_datetime = datetime.combine(booking.date, booking.end_time)
 
             if now > booking_datetime:
                 return JsonResponse({"status": "expired", "message": "Booking expired"})
-
             booking.is_used = True
             booking.save()
 

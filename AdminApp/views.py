@@ -4,8 +4,9 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Sum
+from UserApp.models import Contact
 
 
 # Create your views here.
@@ -159,3 +160,8 @@ def toggle_turf_status(request, turf_id):
     turf.is_active = not turf.is_active
     turf.save()
     return redirect('view_turfs')
+    
+@login_required
+def owner_contacts(request):
+    contacts = Contact.objects.all().order_by('-created_at')
+    return render(request, "owner_contacts.html", {"contacts": contacts})
