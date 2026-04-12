@@ -136,10 +136,8 @@ def user_signup(request):
             email=email,
             password=password
         )
-
         messages.success(request, "Account created successfully")
         return redirect('user:user_login')
-
     return render(request, "user_signup.html")
 
 def user_login(request):
@@ -176,7 +174,6 @@ def my_bookings(request):
         payment_status='paid'
     )
     active_bookings = []
-
     for booking in bookings:
         booking_datetime = datetime.combine(booking.date, booking.end_time)
 

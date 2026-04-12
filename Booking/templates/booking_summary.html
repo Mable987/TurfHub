@@ -57,28 +57,48 @@
                                 <ul id="navigation">
                                     <li><a href="{% url 'user:home' %}">Home</a></li>
                                     <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
-                                    <li><a href="#">Pages</a>
-                                        <ul class="submenu">
-                                            <li><a href="directory_details.html">listing Details</a></li>
-                                            <li><a href="listing.html">Catagories</a></li>
-                                        </ul>
-                                    </li>
-                                    <li><a href="blog.html">Blog</a>
-                                        <ul class="submenu">
-                                            <li><a href="blog.html">Blog</a></li>
-                                            <li><a href="blog_details.html">Blog Details</a></li>
-                                            <li><a href="elements.html">Elements</a></li>
-                                        </ul>
-                                    </li>
+                                   
                                     <li><a href="contact.html">Contact</a></li>
                                 </ul>
                             </nav>
                         </div>
                         <!-- Header-btn -->
-                        <div class="header-btns d-none d-lg-block f-right">
-                            <a href="#" class="mr-40"><i class="ti-user"></i> Log in</a>
-                            <a href="#" class="btn">Add Listing</a>
+                       {% if user.is_authenticated %}
+
+                        <div class="dropdown user-menu">
+
+                            <a class="nav-link dropdown-toggle user-btn" href="#" data-toggle="dropdown">
+                                <span class="user-icon">👤</span>
+                                {{ user.username }}
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-right user-dropdown">
+
+                                <a class="dropdown-item" href="{% url 'user:profile' %}">
+                                    👤 Profile
+                                </a>
+
+                                <a class="dropdown-item" href="{% url 'user:my_bookings' %}">
+                                    🏟 My Bookings
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
+                                <a class="dropdown-item logout-item" href="{% url 'user:user_logout' %}">
+                                    🚪 Logout
+                                </a>
+
+                            </div>
+
                         </div>
+
+                        {% else %}
+
+                        <a href="{% url 'user:user_login' %}" class="btn btn-primary">Login</a>
+                        <a href="{% url 'user:user_signup' %}" class="btn btn-success">Sign Up</a>
+
+                        {% endif %}
+
                         <!-- Mobile Menu -->
                         <div class="col-12">
                             <div class="mobile_menu d-block d-lg-none"></div>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% extends "owner/base_owner_dashboard.html" %}
+{% block content %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="row">
+          <div class="col-12">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"> Contacts Details</h3>
+
+                <div class="card-tools">
+                  <div class="input-group input-group-sm" style="width: 150px;">
+                    <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                    <div class="input-group-append">
+                      <button type="submit" class="btn btn-default">
+                        <i class="fas fa-search"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover text-nowrap">
+                  <thead>
+                    <tr>
+                      <th> Name</th>
+                      <th>Email</th>
+                      <th> Message</th>
+                      <th>Action</th>
+
+                    </tr>
+                  </thead>
+                  <tbody>
+                  {% for c in contacts %}
+                    <tr>
+                      <td>{{c.name}}</td>
+                      <td>{{ c.email }}</td>
+
+                      <td>{{c.message}}</td>
+                      <td>
+<!--                           <a href="{% url 'edit_category' category_id=c.id %}" class="btn btn-outline-primary">Edit</a>-->
+<!--                             <a href="{% url 'delete_category' category_id=c.id %}" class="btn btn-outline-danger" onclick="return confirm('Are you sure?')">-->
+<!--                                      Delete</a>-->
+                      </td>
+
+                    </tr>
+                  {% endfor %}
+
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+</body>
+</html>
+{% endblock %}

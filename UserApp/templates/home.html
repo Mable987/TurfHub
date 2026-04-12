@@ -53,6 +53,10 @@
         .search-box .search-form {
             flex: 0 0 auto;
         }
+        .card-img-top {
+            height: 200px;     
+            object-fit: cover;  
+        }
     </style>
 </head>
 
@@ -260,7 +264,7 @@
 
                                 <div class="properties__img overlay1">
                                     <a href="{% url 'user:turf_details' turf.id %}">
-                                        <img src="{{ turf.turf_image.url }}" alt="">
+                                        <img src="{{ turf.turf_image.url }}" class="card-img-top" alt="">
                                     </a>
 
                                     <div class="img-text">
