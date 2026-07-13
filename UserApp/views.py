@@ -87,14 +87,6 @@ def add_review(request, turf_id):
         messages.error(request, "You already reviewed this turf.")
         return redirect('user:turf_details', turf_id=turf_id)
 
-    if not Booking.objects.filter(
-        user=request.user,
-        turf=turf,
-        payment_status='paid'
-    ).exists():
-        messages.error(request, "You can only review after booking.")
-        return redirect('user:turf_details', turf_id=turf_id)
-
     rating = request.POST.get("rating")
     comment = request.POST.get("comment")
 
@@ -191,7 +183,7 @@ def contact_view(request):
 
         if not name or not email or not subject or not message:
             messages.error(request, "All fields are required")
-            return redirect("contact")
+            return redirect("user:contact")
         Contact.objects.create(
             name=name,
             email=email,
@@ -199,8 +191,7 @@ def contact_view(request):
             message=message
         )
         messages.success(request, "Message sent successfully!")
-        return redirect("contact")
-
+        return redirect("user:contact")
     return render(request, "contacts.html")
 
 

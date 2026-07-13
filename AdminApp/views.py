@@ -161,7 +161,11 @@ def toggle_turf_status(request, turf_id):
     turf.save()
     return redirect('view_turfs')
     
-@login_required
+@superuser_required
 def owner_contacts(request):
     contacts = Contact.objects.all().order_by('-created_at')
     return render(request, "owner_contacts.html", {"contacts": contacts})
+@superuser_required
+def admin_contacts(request):
+    contacts = Contact.objects.all().order_by('-created_at')
+    return render(request, "contact_data.html", {"contacts": contacts})

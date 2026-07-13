@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
     <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
     <style>
         .user-dropdown {
             min-width: 180px;
@@ -35,6 +36,22 @@
         .user-dropdown .dropdown-item {
             padding: 12px 20px;
         }
+    .logo-text {
+        font-size: 22px;
+        font-weight: 700;
+        color: #ffffff;
+        text-decoration: none;
+    }
+    .properties__img img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.logo-icon {
+    margin-right: 6px;
+}
     </style>
 </head>
 
@@ -58,8 +75,10 @@
                 <div class="container-fluid">
                     <div class="menu-wrapper d-flex align-items-center justify-content-between">
                         <!-- Logo -->
-                        <div class="logo">
-                            <a href="index.html"><img src="{% static 'assets/img/logo/logo.png' %}" alt=""></a>
+                        <div class="logo d-flex align-items-center">
+                            <a href="{% url 'user:home' %}" class="logo-text">
+                                <span class="logo-icon">⚽</span> TurfHub
+                            </a>
                         </div>
                         <!-- Main-menu -->
                         <div class="main-menu f-right d-none d-lg-block">
@@ -278,31 +297,68 @@
         </div>
         <!-- listing-area Area End -->       
     </main>
-    <footer>
-        <div class="footer-wrapper pt-30">
-            <!-- footer-bottom -->
-            <div class="footer-bottom-area">
-                <div class="container">
-                    <div class="footer-border">
-                        <div class="row d-flex justify-content-between align-items-center">
-                            <div class="col-xl-10 col-lg-9 ">
-                                <div class="footer-copy-right">
-                                    <p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                                        Copyright &copy;
-                                        <script>document.write(new Date().getFullYear());</script> All rights reserved |
-                                        This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a
-                                            href="https://colorlib.com" target="_blank">Colorlib</a>
-                                        <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+   <footer class="footer-area">
+    <div class="container">
+        <div class="row pt-5 pb-4">
+
+            <!-- Logo + About -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h3 class="footer-logo">⚽ TurfHub</h3>
+                <p class="footer-text">
+                    Discover and book the best turfs near you.
+                    Play more. Worry less.
+                </p>
+
+                <div class="footer-social">
+                    <a href="#">🌐</a>
+                    <a href="#">📷</a>
+                    <a href="#">📘</a>
                 </div>
             </div>
-        </div>
-    </footer>
 
+            <!-- Quick Links -->
+            <div class="col-lg-2 col-md-6 mb-4">
+                <h5>Quick Links</h5>
+                <ul class="footer-links">
+                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
+                    <li><a href="{% url 'user:contact' %}">Contact</a></li>
+                </ul>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="col-lg-3 col-md-6 mb-4">
+                <h5>Contact</h5>
+                <p>📍 Kerala, India</p>
+                <p>📞 +91 98765 43210</p>
+                <p>✉ turfhub@gmail.com</p>
+            </div>
+
+            <!-- Newsletter -->
+            <div class="col-lg-4 col-md-6 mb-4">
+                <h5>Stay Updated</h5>
+                <p>Get latest offers & turf updates</p>
+
+                <form>
+                    <input type="email" placeholder="Enter your email" class="footer-input">
+                    <button type="submit" class="footer-btn">Subscribe</button>
+                </form>
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- Bottom -->
+        <div class="footer-bottom d-flex justify-content-between">
+            <p>© 2026 TurfHub. All rights reserved.</p>
+            <div>
+                <a href="#">Privacy</a> | 
+                <a href="#">Terms</a>
+            </div>
+        </div>
+    </div>
+</footer>
     <!-- Scroll Up -->
     <div id="back-top">
         <a title="Go to Top" href="#"> <i class="fas fa-level-up-alt"></i></a>

@@ -1,10 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import user_passes_test ,login_required
+from django.contrib.auth.decorators import user_passes_test 
 from Booking.models import *
 from django.db.models import Sum
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
-
 from UserApp.models import Contact
 
 
@@ -125,7 +124,7 @@ def owner_view_turfs(request):
 
     return render(request, "owner/view_turfs.html", context)
 
-@login_required(login_url='owner:owner_login')
+@owner_required
 def owner_edit_turf(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id, owner=request.user)
@@ -167,7 +166,7 @@ def owner_update_turf(request, turf_id):
         turf.sports.set(selected_sports)
 
         return redirect('owner:owner_view_turfs')
-@login_required(login_url='owner:owner_login')
+@owner_required
 def owner_delete_turf(request, turf_id):
 
     turf = get_object_or_404(Turf, id=turf_id, owner=request.user)
@@ -188,7 +187,7 @@ def owner_view_bookings(request):
     }
 
     return render(request, "owner/view_bookings.html", context)
-@login_required
+@owner_required
 def owner_contacts(request):
     contacts = Contact.objects.all().order_by('-created_at')
     return render(request, "owner/owner_contacts.html", {"contacts": contacts})

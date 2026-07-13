@@ -113,3 +113,45 @@
     font-size: 15px;
     padding: 10px;
 }
+.footer-area {
+    background: #0f172a !important;
+    color: #ffffff !important;
+}
+
+/* Headings */
+.footer-area h3,
+.footer-area h5 {
+    color: #ffffff !important;
+}
+
+/* Paragraph text */
+.footer-area p {
+    color: #cccccc !important;
+}
+
+/* Links */
+.footer-area a {
+    color: #cccccc !important;
+}
+
+.footer-area a:hover {
+    color: #C77DFF !important;
+}
+
+/* Input field */
+.footer-input {
+    background: #1e293b;
+    color: #fff;
+    border: none;
+}
+
+/* Placeholder color */
+.footer-input::placeholder {
+    color: #aaa;
+}
+
+/* Bottom text */
+.footer-bottom p,
+.footer-bottom a {
+    color: #aaa !important;
+}
