@@ -1,8 +1,9 @@
 from django.urls import path
 from UserApp import views
 
-appname = "user"
+app_name = "user"
 urlpatterns = [
+    path('', views.home, name='index'),
     path('home/', views.home, name='home'),
     path('turf_list/', views.turf_list, name='turf_list'),
     path('turf_details/<int:turf_id>/', views.turf_details, name='turf_details'),
