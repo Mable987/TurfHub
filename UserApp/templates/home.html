@@ -68,6 +68,12 @@
 .logo-text span {
     color: #C77DFF;
 }
+.city-img {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: 8px;
+}
     </style>
 </head>
 
@@ -234,9 +240,11 @@
                     {% for c in cities %}
                     <div class="col-lg-6 col-md-6 col-sm-6">
                         <div class="single-location mb-30">
-                            <div class="location-img">
-                                <img src="{% static 'assets/img/gallery/' %}{% cycle 'kochi_1.jpeg' 'tvm_1.jpeg' 'kollam_2.jpg' %}">
-                            </div>
+                           <div class="location-img">
+    <img src="{% static 'assets/img/gallery/' %}{% cycle 'kochi_1.jpeg' 'tvm_1.jpeg' 'kollam_2.jpg' %}"
+         class="city-img"
+         alt="{{ c.city }}">
+</div>
                             <div class="location-details">
                                 <p>{{c.city}}</p>
                                 <a href="{% url 'user:turf_list' %}?city={{ c.city }}"

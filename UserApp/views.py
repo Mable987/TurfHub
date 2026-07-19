@@ -7,6 +7,184 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import Avg, Count
+from django.core.mail import send_mail
+from django.conf import settings
+
+# Create your views here.
+
+def home(request):
+    turfs = Turf.objects.filter(is_active=True)[:6]
+    sports = Sport.objects.all()
+
+    cities = (
+        Turf.objects.filter(is_active=True)
+        .values('city')
+        .annotate(count=Count('id'))
+        .order_by('-count')[:6]
+    )
+
+    context = {
+        'turfs': turfs,
+        'sports': sports,
+        'cities': cities
+    }
+
+    return render(request, "home.html", context)
+def turf_list(request):
+
+    sports = Sport.objects.all()
+    selected_sport = request.GET.get('sport')
+    city = request.GET.get('city')
+    state = request.GET.get('state')
+    turfs = Turf.objects.filter(is_active=True).prefetch_related('sports')
+
+    if city:
+        turfs = turfs.filter(city__icontains=city)
+
+    if state:
+        turfs = turfs.filter(state__icontains=state)
+
+    if selected_sport:
+        turfs = turfs.filter(sports__id=selected_sport)
+
+    context = {
+        'turfs': turfs,
+        'sports': sports,
+        'selected_sport': selected_sport,
+        'city': city,
+        'state': state
+    }
+    return render(request, 'turf_list.html', context)
+def turf_details(request, turf_id):
+
+    turf = get_object_or_404(Turf, id=turf_id)
+
+    reviews = Review.objects.filter(turf=turf).order_by('-created_at')
+
+    avg_rating = reviews.aggregate(avg=Avg('rating'))['avg'] or 0
+    total_reviews = reviews.count()
+
+    user_reviewed = False
+    if request.user.is_authenticated:
+        user_reviewed = reviews.filter(user=request.user).exists()
+
+    context = {
+        'turf': turf,
+        'reviews': reviews,
+        'avg_rating': avg_rating,
+        'total_reviews': total_reviews,
+        'user_reviewed': user_reviewed
+    }
+
+    return render(request, 'turf_details.html', context)
+
+@login_required
+def add_review(request, turf_id):
+    turf = get_object_or_404(Turf, id=turf_id)
+
+    if request.method != "POST":
+        return redirect('user:turf_details', turf_id=turf_id)
+
+    if Review.objects.filter(user=request.user, turf=turf).exists():
+        messages.error(request, "You already reviewed this turf.")
+        return redirect('user:turf_details', turf_id=turf_id)
+
+    rating = request.POST.get("rating")
+    comment = request.POST.get("comment")
+
+    if not rating or not comment:
+        messages.error(request, "All fields are required.")
+        return redirect('user:turf_details', turf_id=turf_id)
+
+    Review.objects.create(
+        user=request.user,
+        turf=turf,
+        rating=int(rating),
+        comment=comment,
+    )
+    messages.success(request, "Review added successfully!")
+    return redirect('user:turf_details', turf_id=turf_id)
+
+def user_signup(request):
+
+    if request.method == "POST":
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        confirm_password = request.POST.get("confirm_password")
+
+        if password != confirm_password:
+            messages.error(request, "Passwords do not match")
+            return redirect('user:user_signup')
+
+        if User.objects.filter(email=email).exists():
+            messages.error(request, "Email already registered")
+            return redirect('user:user_signup')
+
+        if User.objects.filter(username=username).exists():   
+            messages.error(request, "Username already taken")
+            return redirect('user:user_signup')
+
+        User.objects.create_user(
+            username=username,
+            email=email,
+            password=password
+        )
+        messages.success(request, "Account created successfully")
+        return redirect('user:user_login')
+    return render(request, "user_signup.html")
+
+def user_login(request):
+
+    if request.method == "POST":
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            messages.error(request, "Invalid email or password")
+            return redirect('user:user_login')
+        user = authenticate(request, username=user.username, password=password)
+
+        if user:
+            login(request, user)
+            return redirect('user:home')
+        messages.error(request, "Invalid email or password")
+
+    return render(request, "user_login.html")
+def user_logout(request):
+    logout(request)
+    return redirect('user:user_login')
+def profile(request):
+    return render(request,'profile.html')
+
+@login_required(login_url='user:user_login')
+def my_bookings(request):
+
+    now = timezone.now()
+    bookings = Booking.objects.filter(
+        user=request.user,
+        payment_status='paid'
+    )
+    active_bookings = []
+    for booking in bookings:
+        booking_datetime = datetime.combine(booking.date, booking.end_time)
+
+        if booking_datetime > now.replace(tzinfo=None):
+            active_bookings.append(booking)
+
+    return render(request, 'my_bookings.html', {'bookings': active_bookings})
+
+from django.shortcuts import redirect, render
+from Booking.models import *
+from UserApp.models import Contact
+from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate, login, logout
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import Avg, Count
 
 # Create your views here.
 
@@ -176,23 +354,61 @@ def my_bookings(request):
 
 def contact_view(request):
     if request.method == "POST":
-        name = request.POST.get("name")
-        email = request.POST.get("email")
-        subject = request.POST.get("subject")
-        message = request.POST.get("message")
+        name = request.POST.get("name", "").strip()
+        email = request.POST.get("email", "").strip()
+        subject = request.POST.get("subject", "").strip()
+        message = request.POST.get("message", "").strip()
 
-        if not name or not email or not subject or not message:
-            messages.error(request, "All fields are required")
+        if not all([name, email, subject, message]):
+            messages.error(request, "Please fill in all the fields.")
             return redirect("user:contact")
+
+        # Save message
         Contact.objects.create(
             name=name,
             email=email,
             subject=subject,
             message=message
         )
-        messages.success(request, "Message sent successfully!")
+
+        # Send email notification
+        try:
+            send_mail(
+                subject=f"New Contact Message - {subject}",
+                message=f"""
+A new contact form has been submitted.
+
+Name: {name}
+Email: {email}
+
+Subject:
+{subject}
+
+Message:
+{message}
+""",
+                from_email=settings.EMAIL_HOST_USER,
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=False,
+            )
+        except Exception:
+            messages.warning(
+                request,
+                "Your message was saved, but email notification could not be sent."
+            )
+            return redirect("user:contact")
+
+        messages.success(
+            request,
+            "Thank you! Your message has been sent successfully."
+        )
+
         return redirect("user:contact")
+
     return render(request, "contacts.html")
+
+
+
 
 
 

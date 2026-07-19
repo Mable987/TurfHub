@@ -149,9 +149,17 @@ def confirm_booking(request):
 @login_required
 def booking_success(request):
 
+    today = timezone.localdate()
+    now = timezone.localtime().time()
+
     bookings = Booking.objects.filter(
         user=request.user,
         payment_status='paid'
+    ).exclude(
+        date__lt=today
+    ).exclude(
+        date=today,
+        end_time__lt=now
     ).order_by('-created_at')
 
     return render(request, "booking_success.html", {"bookings": bookings})
