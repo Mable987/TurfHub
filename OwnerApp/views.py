@@ -133,39 +133,32 @@ def owner_edit_turf(request, turf_id):
 
         turf.turf_name = request.POST.get('turf_name')
         turf.location = request.POST.get('location')
+        turf.city = request.POST.get('city')
+        turf.state = request.POST.get('state')
         turf.price_per_hour = request.POST.get('price')
         turf.description = request.POST.get('description')
+
+        opening_time = request.POST.get('opening_time')
+        if opening_time:
+            turf.opening_time = opening_time
+
+        closing_time = request.POST.get('closing_time')
+        if closing_time:
+            turf.closing_time = closing_time
 
         if request.FILES.get('turf_image'):
             turf.turf_image = request.FILES.get('turf_image')
 
         turf.save()
 
+        selected_sports = request.POST.getlist("sports")
+        turf.sports.set(selected_sports)
+
+        messages.success(request, "Turf updated successfully.")
         return redirect('owner:owner_view_turfs')
     sports = Sport.objects.all()
 
     return render(request, "owner/edit_turf.html", {"turf": turf, "sports": sports})
-def owner_update_turf(request, turf_id):
-
-    turf = get_object_or_404(Turf, id=turf_id)
-
-    if request.method == "POST":
-
-        turf.turf_name = request.POST.get("turf_name")
-        turf.location = request.POST.get("location")
-        turf.price_per_hour = request.POST.get("price")
-        turf.description = request.POST.get("description")
-
-        if request.FILES.get("turf_image"):
-            turf.turf_image = request.FILES.get("turf_image")
-
-        turf.save()
-
-        # update sports
-        selected_sports = request.POST.getlist("sports")
-        turf.sports.set(selected_sports)
-
-        return redirect('owner:owner_view_turfs')
 @owner_required
 def owner_delete_turf(request, turf_id):
 

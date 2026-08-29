@@ -3,148 +3,228 @@
 <html lang="en">
 
 <head>
-
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400&display=swap" rel="stylesheet">
-
-    <link rel="stylesheet" href="{% static 'login/css/bootstrap.min.css' %}">
-
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <title>TurfHub Login</title>
 
     <style>
+        :root {
+            --turf: #12b76a;
+            --turf-dark: #0d8a4f;
+            --ink: #101828;
+            --muted: #667085;
+            --line: #e4e7ec;
+        }
+
+        * { box-sizing: border-box; }
+
         body {
-            font-family: 'Roboto', sans-serif;
-            height: 100vh;
+            font-family: 'Inter', sans-serif;
             margin: 0;
+            min-height: 100vh;
+            display: flex;
+            color: var(--ink);
+        }
 
-            /* Background image */
-            background:url("{% static 'login/images/bg_2.jpeg' %}") no-repeat center center/cover;
+        .brand-panel {
+            flex: 1 1 44%;
+            position: relative;
+            background: radial-gradient(circle at 50% 15%, #123d27 0%, #0b1f14 55%, #081611 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 60px;
+            color: white;
+            overflow: hidden;
+        }
 
+        .brand-panel::after {
+            content: "";
+            position: absolute;
+            left: 0; right: 0; bottom: 18%;
+            height: 1px;
+            background-image: linear-gradient(90deg, rgba(255,255,255,0.35) 0 16px, transparent 16px 30px);
+            background-size: 30px 1px;
+            opacity: 0.5;
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        .brand-mark span.icon {
+            width: 40px; height: 40px;
+            border-radius: 10px;
+            background: var(--turf);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+        }
+
+        .brand-panel h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 38px;
+            line-height: 1.2;
+            margin: 0 0 16px;
+            max-width: 380px;
+        }
+
+        .brand-panel p {
+            color: rgba(255,255,255,0.7);
+            font-size: 15px;
+            max-width: 340px;
+            line-height: 1.6;
+        }
+
+        .form-panel {
+            flex: 1 1 56%;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 40px 24px;
+            background: #ffffff;
         }
 
-        /* Dark overlay */
-        body::before {
-            content: "";
-            position: fixed;
-            top: 0;
-            left: 0;
+        .form-wrap {
             width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.55);
-            z-index: -1;
+            max-width: 380px;
         }
 
-        /* Login card */
-        .login-card {
-            width: 420px;
-            background: white;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        .form-wrap h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 26px;
+            margin: 0 0 6px;
         }
 
-        /* Heading */
-        .login-card h3 {
-            text-align: center;
-            margin-bottom: 10px;
+        .form-wrap .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            margin: 0 0 28px;
         }
 
-        .login-card p {
-            text-align: center;
-            color: #777;
-            margin-bottom: 25px;
+        .alert-msg {
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            margin-bottom: 18px;
         }
 
-        /* Button style */
-        .btn-primary {
-            background: #12b76a;
-            border: none;
-            padding: 12px;
+        .alert-error { background: #fef3f2; color: #b42318; border: 1px solid #fecdca; }
+        .alert-success { background: #ecfdf3; color: #067647; border: 1px solid #abefc6; }
+
+        .field { margin-bottom: 18px; }
+
+        .field label {
+            display: block;
+            font-size: 13px;
             font-weight: 500;
+            color: var(--ink);
+            margin-bottom: 6px;
         }
 
-        .btn-primary:hover {
-            background: #0ea75c;
+        .field input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.15s ease;
         }
 
-        /* Social icons */
-        .social-login a {
-            margin: 0 10px;
-            font-size: 22px;
-            color: #666;
+        .field input:focus {
+            outline: none;
+            border-color: var(--turf);
         }
 
-        .social-login a:hover {
-            color: #12b76a;
+        .submit-btn {
+            width: 100%;
+            padding: 13px;
+            background: var(--turf);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'Space Grotesk', sans-serif;
+            cursor: pointer;
+            transition: background 0.15s ease;
+            margin-top: 6px;
+        }
+
+        .submit-btn:hover { background: var(--turf-dark); }
+
+        .switch-line {
+            text-align: center;
+            margin-top: 22px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .switch-line a {
+            color: var(--turf-dark);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        @media (max-width: 860px) {
+            .brand-panel { display: none; }
         }
     </style>
-
 </head>
 
 <body>
 
-    <div class="login-card">
+    <div class="brand-panel">
+        <div class="brand-mark"><span class="icon">⚽</span> TurfHub</div>
+        <h1>Welcome back to the pitch.</h1>
+        <p>Sign in to manage your bookings and find your next game.</p>
+    </div>
 
-        <h3>Login to <strong>TurfHub</strong></h3>
-        <p>Book your favorite turf instantly</p>
+    <div class="form-panel">
+        <div class="form-wrap">
+            <h2>Log in</h2>
+            <p class="subtitle">Book your favorite turf instantly.</p>
 
-        <form method="POST" action="{% url 'user:user_login' %}">
-            {% csrf_token %}
             {% if messages %}
             {% for message in messages %}
-            <div style="color:red; text-align:center; margin-bottom:10px;">
+            <div class="alert-msg {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
                 {{ message }}
             </div>
             {% endfor %}
             {% endif %}
 
-            <div class="form-group mb-3">
-                <label>Email</label>
-                <input type="email" class="form-control" placeholder="your-email@gmail.com" name="email" required>
-            </div>
+            <form method="POST" action="{% url 'user:user_login' %}">
+                {% csrf_token %}
 
-            <div class="form-group mb-3">
-                <label>Password</label>
-                <input type="password" class="form-control" placeholder="Your Password" name="password" required>
-            </div>
+                <div class="field">
+                    <label>Email</label>
+                    <input type="email" name="email" placeholder="your-email@gmail.com" value="{{ email|default:'' }}" required>
+                </div>
 
-            <div class="d-flex justify-content-between mb-3">
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Your password" required>
+                </div>
 
-                <label>
-                    <input type="checkbox"> Remember me
-                </label>
+                <p style="text-align:right; margin: -10px 0 18px;">
+                    <a href="{% url 'user:forgot_password' %}" style="color: var(--muted); font-size: 13px; text-decoration: none;">Forgot password?</a>
+                </p>
 
-                <a href="#" style="font-size:14px;">Forgot Password</a>
+                <button type="submit" class="submit-btn">Log in</button>
+            </form>
 
-            </div>
-
-            <input type="submit" value="Log In" class="btn btn-primary btn-block w-100">
-
-            <span class="d-block text-center my-4 text-muted">or sign up with</span>
-
-            <div class="social-login text-center">
-                <a href="#"><span class="icon-facebook"></span></a>
-                <a href="#"><span class="icon-twitter"></span></a>
-                <a href="#"><span class="icon-google"></span></a>
-            </div>
-
-            <div class="mt-4 text-center">
-                Don't have an account?
-                <a href="{% url 'user:user_signup' %}">Sign Up</a>
-            </div>
-
-        </form>
-
+            <p class="switch-line">
+                Don't have an account? <a href="{% url 'user:user_signup' %}">Sign up</a>
+            </p>
+        </div>
     </div>
 
-    <script src="{% static 'login/js/jquery-3.3.1.min.js' %}"></script>
-    <script src="{% static 'login/js/bootstrap.min.js' %}"></script>
-
 </body>
-
 </html>

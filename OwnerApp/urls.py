@@ -11,7 +11,6 @@ urlpatterns = [
     path('add_turf/', views.owner_add_turf, name='owner_add_turf'),
     path('view_turfs/', views.owner_view_turfs, name='owner_view_turfs'),
     path('edit_turf/<int:turf_id>/', views.owner_edit_turf, name='owner_edit_turf'),
-    path('update_turf/<int:turf_id>/', views.owner_update_turf, name='owner_update_turf'),
     path('delete_turf/<int:turf_id>/', views.owner_delete_turf, name='owner_delete_turf'),
     path('bookings/', views.owner_view_bookings, name='owner_view_bookings'),
     path('owner_contacts/', views.owner_contacts, name='owner_contacts'),

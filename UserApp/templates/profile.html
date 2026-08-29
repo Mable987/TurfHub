@@ -1,0 +1,322 @@
+<!doctype html>
+{% load static %}
+<html class="no-js" lang="zxx">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>My Profile</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'assets/img/favicon.ico' %}">
+
+    <!-- CSS here -->
+    <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slicknav.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/animate.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/hamburgers.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/magnific-popup.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fontawesome-all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/themify-icons.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/slick.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/nice-select.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/responsive.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/main.css' %}">
+    <style>
+        .logo-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            margin-right: 6px;
+        }
+
+        .profile-card {
+            max-width: 520px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            padding: 36px;
+        }
+
+        .avatar-wrap {
+            position: relative;
+            width: 110px;
+            height: 110px;
+            margin: 0 auto 20px;
+        }
+
+        .avatar-wrap img,
+        .avatar-fallback {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #eee;
+            display: block;
+        }
+
+        .avatar-fallback {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #12b76a;
+            color: white;
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        .avatar-edit-btn {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #12b76a;
+            color: white;
+            border: 2px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .avatar-edit-btn input {
+            display: none;
+        }
+
+        .alert-msg {
+            text-align: center;
+            margin-bottom: 16px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #eafaf1;
+            color: #0e7a3f;
+            border: 1px solid #9be3bb;
+        }
+
+        .alert-error {
+            background: #fdecea;
+            color: #b42318;
+            border: 1px solid #f5b5ae;
+        }
+
+        .avatar-picker-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475467;
+            margin: 4px 0 10px;
+            text-align: center;
+        }
+
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .avatar-option {
+            position: relative;
+            cursor: pointer;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.15s ease, transform 0.1s ease;
+        }
+
+        .avatar-option img { width: 100%; height: 100%; display: block; }
+        .avatar-option:hover { transform: scale(1.08); }
+        .avatar-option.selected {
+            border-color: #12b76a;
+            box-shadow: 0 0 0 3px rgba(18,183,106,0.15);
+        }
+        .avatar-option input { position: absolute; opacity: 0; pointer-events: none; }
+    </style>
+</head>
+
+<body>
+    <div id="preloader-active">
+        <div class="preloader d-flex align-items-center justify-content-center">
+            <div class="preloader-inner position-relative">
+                <div class="preloader-circle"></div>
+                <div class="preloader-img pere-text">
+                    <img src="{% static 'assets/img/logo/loder.png' %}" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+    <header>
+        <div class="header-area custom-navbar">
+            <div class="main-header header-sticky">
+                <div class="container-fluid">
+                    <div class="menu-wrapper d-flex align-items-center justify-content-between">
+                        <div class="logo d-flex align-items-center">
+                            <a href="{% url 'user:home' %}" class="logo-text">
+                                <span class="logo-icon">⚽</span> TurfHub
+                            </a>
+                        </div>
+                        <div class="main-menu f-right d-none d-lg-block">
+                            <nav>
+                                <ul id="navigation">
+                                    <li><a href="{% url 'user:home' %}">Home</a></li>
+                                    <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
+                                    <li><a href="{% url 'user:contact' %}">Contact</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                        {% if user.is_authenticated %}
+                        <div class="dropdown user-menu">
+                            <a class="nav-link dropdown-toggle user-btn" href="#" data-toggle="dropdown">
+                                <span class="user-icon">👤</span>
+                                {{ user.username }}
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right user-dropdown">
+                                <a class="dropdown-item" href="{% url 'user:profile' %}">👤 Profile</a>
+                                <a class="dropdown-item" href="{% url 'user:my_bookings' %}">🏟 My Bookings</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item logout-item" href="{% url 'user:user_logout' %}">🚪 Logout</a>
+                            </div>
+                        </div>
+                        {% else %}
+                        <a href="{% url 'user:user_login' %}" class="btn btn-primary">Login</a>
+                        <a href="{% url 'user:user_signup' %}" class="btn btn-success">Sign Up</a>
+                        {% endif %}
+                        <div class="col-12">
+                            <div class="mobile_menu d-block d-lg-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="blog_area section-padding">
+            <div class="container">
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert-msg {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+
+                <div class="profile-card">
+                    <form method="POST" enctype="multipart/form-data" action="{% url 'user:profile' %}">
+                        {% csrf_token %}
+
+                        <div class="avatar-wrap">
+                            {% if user_profile.avatar_url %}
+                            <img src="{{ user_profile.avatar_url }}" alt="Your avatar">
+                            {% else %}
+                            <div class="avatar-fallback">
+                                {{ user.username|slice:":1"|upper }}
+                            </div>
+                            {% endif %}
+                            <label class="avatar-edit-btn" title="Upload a custom photo">
+                                ✎
+                                <input type="file" name="avatar" accept="image/*"
+                                    onchange="this.form.submit()">
+                            </label>
+                        </div>
+
+                        <div class="text-center mb-4">
+                            <h4 class="mb-0">{{ user.first_name|default:user.username }}</h4>
+                            <p class="text-muted">{{ user.email }}</p>
+                        </div>
+
+                        <label class="avatar-picker-label">Or pick an avatar</label>
+                        <div class="avatar-grid">
+                            {% for preset in avatar_presets %}
+                            <label class="avatar-option {% if preset == user_profile.avatar_preset %}selected{% endif %}">
+                                <input type="radio" name="avatar_preset" value="{{ preset }}"
+                                    {% if preset == user_profile.avatar_preset %}checked{% endif %}
+                                    onchange="this.form.submit()">
+                                <img src="{% static 'avatars/'|add:preset %}" alt="Avatar option">
+                            </label>
+                            {% endfor %}
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label>Display name</label>
+                            <input type="text" name="first_name" class="form-control"
+                                value="{{ user.first_name }}" placeholder="Your name">
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100">Save changes</button>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer-area">
+        <div class="container">
+            <div class="row pt-5 pb-4">
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h3 class="footer-logo">⚽ TurfHub</h3>
+                    <p class="footer-text">
+                        Discover and book the best turfs near you.
+                        Play more. Worry less.
+                    </p>
+                </div>
+                <div class="col-lg-2 col-md-6 mb-4">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'user:home' %}">Home</a></li>
+                        <li><a href="{% url 'user:turf_list' %}">Turfs</a></li>
+                        <li><a href="{% url 'user:contact' %}">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6 mb-4">
+                    <h5>Contact</h5>
+                    <p>📍 Kerala, India</p>
+                    <p>✉ turfhub@gmail.com</p>
+                </div>
+            </div>
+            <hr>
+            <div class="footer-bottom d-flex justify-content-between">
+                <p>© 2026 TurfHub. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{% static 'assets/js/vendor/modernizr-3.5.0.min.js' %}"></script>
+    <script src="{% static 'assets/js/vendor/jquery-1.12.4.min.js' %}"></script>
+    <script src="{% static 'assets/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.slicknav.min.js' %}"></script>
+    <script src="{% static 'assets/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/js/slick.min.js' %}"></script>
+    <script src="{% static 'assets/js/wow.min.js' %}"></script>
+    <script src="{% static 'assets/js/animated.headline.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.magnific-popup.js' %}"></script>
+    <script src="{% static 'assets/js/gijgo.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.nice-select.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.sticky.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.counterup.min.js' %}"></script>
+    <script src="{% static 'assets/js/waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.countdown.min.js' %}"></script>
+    <script src="{% static 'assets/js/hover-direction-snake.min.js' %}"></script>
+    <script src="{% static 'assets/js/plugins.js' %}"></script>
+    <script src="{% static 'assets/js/main.js' %}"></script>
+</body>
+
+</html>
